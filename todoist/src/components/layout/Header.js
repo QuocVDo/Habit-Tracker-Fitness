@@ -18,7 +18,7 @@ export default class Header extends Component {
     return (
       <nav>
         <div className="logo">
-          <img src={logo} alt="Todoist"></img>
+          <img src={logo} alt="Todoist" height="100px" width="100px"></img>
         </div>
         <div className="settings">
           <ul>

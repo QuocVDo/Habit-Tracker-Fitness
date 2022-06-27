@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Sidebar from './Sidebar';
 
-export default class Content extends Component {
-  render() {
-    return <Sidebar />;
-  }
+export default function Content() {
+  return <Sidebar />;
 }
