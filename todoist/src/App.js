@@ -1,6 +1,7 @@
 import React from 'react';
 import Content from './components/Content';
 import Header from './components/Header';
+import Auth from './components/Auth';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <h1>Hello World</h1>
       <Header />
       <Content />
+      <Auth />
     </>
   );
 }
