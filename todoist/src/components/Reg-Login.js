@@ -1,15 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { auth } from '../firebase';
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut,
 } from 'firebase/auth';
 
 export default function Auth() {
-  const [currUser, setCurrUser] = useState({});
   const emailRef = useRef();
   const passwordRef = useRef();
 
@@ -27,13 +24,19 @@ export default function Auth() {
     }
   };
 
-  const signOutButton = async () => {};
-
-  //When Auth State Changes set the currentUser state variable
-  //within the function.
-  onAuthStateChanged(auth, (currentUser) => {
-    setCurrUser(currentUser);
-  });
+  const loginButton = async () => {
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+      emailRef.current.value = '';
+      passwordRef.current.value = '';
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <>
@@ -52,9 +55,8 @@ export default function Auth() {
         <span> Password:</span>
         <input type="password" placeholder="Password" ref={passwordRef}></input>
       </div>
+      <button onClick={loginButton}>Log In</button>
       <button onClick={registerButton}>Register Now</button>
-      <button onClick={signOutButton}>Sign Out</button>
-      <div className="currUser">Currently Signed in as: {currUser?.email}</div>
     </>
   );
 }
