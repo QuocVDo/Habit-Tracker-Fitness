@@ -8,7 +8,7 @@ import {
 import {
   Title,
   TextInput,
-  PasswordInput,Logged in As: quoc@gmail.com
+  PasswordInput,
   Button,
   Center,
   Container,
