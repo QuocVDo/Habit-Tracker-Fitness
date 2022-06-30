@@ -8,7 +8,14 @@ function App() {
     <MantineProvider
       withGlobalStyles
       withNormalizeCSS
-      theme={{ colorScheme: colorScheme, primaryColor: 'green' }}
+      theme={{
+        colorScheme: colorScheme,
+        primaryColor: 'green',
+        headings: {
+          fontFamily: 'Roboto, sans-serif',
+          sizes: { h1: { fontSize: 40 } },
+        },
+      }}
     >
       <ApplicationShell
         setColorScheme={setColorScheme}

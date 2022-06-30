@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import RegLogin from './Reg-Login';
+import Login from './Login';
 import MenuIcons from './MenuIcons';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -15,13 +15,25 @@ import {
   Button,
   Space,
   Paper,
+  Modal,
 } from '@mantine/core';
 
 export default function ApplicationShell({ setColorScheme, colorScheme }) {
   const theme = useMantineTheme();
+
+  //For Burger Icon and Navbar
   const [opened, setOpened] = useState(false);
+
+  //Keep track of current user  Data
   const [currUser, setCurrUser] = useState({});
+
+  //keep track whether somone is logged in or not
   const [loggedIn, setLoggedIn] = useState(false);
+
+  //State for opening and closing the LOGIN MODAL
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  //Display Login MOdal
 
   //UseEffect hook + onAuthStateChanged in order to
   //Respond to changes in Authentication state.
@@ -30,12 +42,14 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
       if (currentUser) {
         setCurrUser(currentUser);
         setLoggedIn(true);
+        setShowLoginModal(false);
       } else {
         setLoggedIn(false);
       }
     });
   }, []);
 
+  //Sign out Button (Placeholder)
   const signOutButton = async () => {
     try {
       await signOut(auth);
@@ -87,12 +101,24 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
               <MenuIcons
                 setColorScheme={setColorScheme}
                 colorScheme={colorScheme}
+                user={currUser}
+                loggedIn={loggedIn}
+                setShowLoginModal={setShowLoginModal}
               />
             </div>
           </div>
         </Header>
       }
     >
+      {/*Login Modal*/}
+      <Modal
+        size="lg"
+        opened={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      >
+        <Login />
+      </Modal>
+
       <Paper shadow="xs" p="xl">
         <Text>Resize app to see responsive navbar in action</Text>
         <Button variant="gradient" color="cyan">
@@ -103,7 +129,7 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
       <Paper shadow="xs" p="xl">
         <div styles={{ display: 'flex' }}>
           {!loggedIn ? (
-            <RegLogin />
+            <Login />
           ) : (
             <Text>
               Logged in as:{' '}

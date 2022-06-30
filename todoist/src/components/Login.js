@@ -1,42 +1,40 @@
 import React, { useRef, useState } from 'react';
-import { FaEnvelope, FaLock, FaExclamationCircle } from 'react-icons/fa';
+import {
+  FaEnvelope,
+  FaLock,
+  FaExclamationCircle,
+  FaGoogle,
+} from 'react-icons/fa';
 import { auth } from '../firebase';
 import {
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth';
 import {
   Title,
   TextInput,
   PasswordInput,
   Button,
-  Center,
   Container,
   Space,
   Group,
   Alert,
   LoadingOverlay,
+  Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { ReactComponent as ReactLogo } from '../assets/undraw_secure_login_pdn4.svg';
 
-export default function RegLogin() {
+export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [visible, setVisible] = useState(false);
   const [authFailed, setAuthFailed] = useState(false);
 
-  const registerButton = async () => {
-    try {
-      await createUserWithEmailAndPassword(
-        auth,
-        emailRef.current.value,
-        passwordRef.current.value
-      );
-      emailRef.current.value = '';
-      passwordRef.current.value = '';
-    } catch (error) {
-      console.log(error.message);
-    }
+  //User presses the Register now button
+  const registerButton = () => {
+    console.log('sup');
   };
 
   const loginButton = async () => {
@@ -64,42 +62,70 @@ export default function RegLogin() {
     },
   });
 
+  const signInWithGoogleButton = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      setAuthFailed(true);
+    }
+  };
+
   return (
     <div style={{ position: 'relative' }}>
       <LoadingOverlay visible={visible} />
-      <Container size="xs" px="xs">
+      <Container size={550} px="md">
         <LoadingOverlay visible={visible} />
-        <Center>
+        <Group grow>
           <Title order={1}>Log In</Title>
-        </Center>
+          <Space w="xs"></Space>
+          <ReactLogo height="100px" style={{ marginBottom: '0.5rem' }} />
+        </Group>
+
+        <Divider></Divider>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <TextInput
             placeholder="Email"
             {...form.getInputProps('email')}
             ref={emailRef}
             icon={<FaEnvelope />}
+            style={{ marginTop: '3rem' }}
           />
-          <Space h="xs"></Space>
           <PasswordInput
             placeholder="Password"
             ref={passwordRef}
             icon={<FaLock />}
+            style={{ marginTop: '1rem' }}
           />
-          <Space h="xs"></Space>
-
-          <Group position="right">
+          <Button
+            color="cyan"
+            variant="gradient"
+            type="submit"
+            fullWidth
+            onClick={loginButton}
+            style={{ marginTop: '5rem' }}
+          >
+            LOG IN
+          </Button>
+          <Group grow style={{ marginTop: '1rem', marginBottom: '4rem' }}>
             <Button
-              color="cyan"
-              variant="gradient"
-              type="submit"
-              onClick={loginButton}
+              color="red"
+              gradient={{ from: 'blue', to: 'teal', deg: 40 }}
+              leftIcon={<FaGoogle />}
+              onClick={signInWithGoogleButton}
             >
-              Log In
+              Sign in with Google
             </Button>
-            <Button onClick={registerButton}>Register Now</Button>
+            <Button
+              variant="gradient"
+              gradient={{ from: 'teal', to: 'lime', deg: 60 }}
+              onClick={registerButton}
+            >
+              Register Now
+            </Button>
           </Group>
         </form>
-        <Space h="md" />
+        <Space h="xl" />
         {authFailed && (
           <Alert
             icon={<FaExclamationCircle size={16} />}
