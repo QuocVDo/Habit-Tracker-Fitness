@@ -17,7 +17,7 @@ import {
   Paper,
 } from '@mantine/core';
 
-export default function ApplicationShell({ setColorScheme }) {
+export default function ApplicationShell({ setColorScheme, colorScheme }) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   const [currUser, setCurrUser] = useState({});
@@ -84,7 +84,10 @@ export default function ApplicationShell({ setColorScheme }) {
               />
             </MediaQuery>
             <div style={{ marginLeft: 'auto' }}>
-              <MenuIcons setColorScheme={setColorScheme} />
+              <MenuIcons
+                setColorScheme={setColorScheme}
+                colorScheme={colorScheme}
+              />
             </div>
           </div>
         </Header>

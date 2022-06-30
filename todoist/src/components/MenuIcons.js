@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Group, ActionIcon } from '@mantine/core';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
-export default function MenuIcons({ setColorScheme }) {
-  const [showDarkButton, setShowDarkButton] = useState(false);
+export default function MenuIcons({ setColorScheme, colorScheme }) {
+  const [showDarkButton, setShowDarkButton] = useState(
+    colorScheme === 'light' ? true : false
+  );
   return (
     <Group spacing="xs">
       {showDarkButton ? (

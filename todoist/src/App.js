@@ -10,7 +10,10 @@ function App() {
       withNormalizeCSS
       theme={{ colorScheme: colorScheme, primaryColor: 'green' }}
     >
-      <ApplicationShell setColorScheme={setColorScheme} />
+      <ApplicationShell
+        setColorScheme={setColorScheme}
+        colorScheme={colorScheme}
+      />
     </MantineProvider>
   );
 }
