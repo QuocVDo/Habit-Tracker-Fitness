@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login';
 import MenuIcons from './MenuIcons';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import {
   AppShell,
@@ -13,10 +13,10 @@ import {
   Burger,
   useMantineTheme,
   Button,
-  Space,
   Paper,
   Modal,
 } from '@mantine/core';
+import Register from './Register';
 
 export default function ApplicationShell({ setColorScheme, colorScheme }) {
   const theme = useMantineTheme();
@@ -33,7 +33,8 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
   //State for opening and closing the LOGIN MODAL
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  //Display Login MOdal
+  //State for opening and closing the Reg Modal
+  const [showRegModal, setShowRegModal] = useState(false);
 
   //UseEffect hook + onAuthStateChanged in order to
   //Respond to changes in Authentication state.
@@ -43,20 +44,12 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
         setCurrUser(currentUser);
         setLoggedIn(true);
         setShowLoginModal(false);
+        setShowRegModal(false);
       } else {
         setLoggedIn(false);
       }
     });
   }, []);
-
-  //Sign out Button (Placeholder)
-  const signOutButton = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   return (
     <AppShell
@@ -101,9 +94,10 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
               <MenuIcons
                 setColorScheme={setColorScheme}
                 colorScheme={colorScheme}
-                user={currUser}
+                currUser={currUser}
                 loggedIn={loggedIn}
                 setShowLoginModal={setShowLoginModal}
+                setShowRegModal={setShowRegModal}
               />
             </div>
           </div>
@@ -116,7 +110,21 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
         opened={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       >
-        <Login />
+        <Login
+          setShowLoginModal={setShowLoginModal}
+          setShowRegModal={setShowRegModal}
+        />
+      </Modal>
+
+      <Modal
+        size="lg"
+        opened={showRegModal}
+        onClose={() => setShowRegModal(false)}
+      >
+        <Register
+          setShowLoginModal={setShowLoginModal}
+          setShowRegModal={setShowRegModal}
+        />
       </Modal>
 
       <Paper shadow="xs" p="xl">
@@ -124,20 +132,6 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
         <Button variant="gradient" color="cyan">
           Button
         </Button>
-      </Paper>
-      <Space h="md" />
-      <Paper shadow="xs" p="xl">
-        <div styles={{ display: 'flex' }}>
-          {!loggedIn ? (
-            <Login />
-          ) : (
-            <Text>
-              Logged in as:{' '}
-              <span style={{ color: '#03cffc' }}>{currUser?.email}</span>
-            </Text>
-          )}
-          {loggedIn && <Button onClick={signOutButton}>Sign Out</Button>}
-        </div>
       </Paper>
     </AppShell>
   );

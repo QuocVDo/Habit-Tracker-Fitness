@@ -26,17 +26,13 @@ import {
 import { useForm } from '@mantine/form';
 import { ReactComponent as ReactLogo } from '../assets/undraw_secure_login_pdn4.svg';
 
-export default function Login() {
+export default function Login({ setShowRegModal, setShowLoginModal }) {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [visible, setVisible] = useState(false);
   const [authFailed, setAuthFailed] = useState(false);
 
-  //User presses the Register now button
-  const registerButton = () => {
-    console.log('sup');
-  };
-
+  //user presses log in button
   const loginButton = async () => {
     setVisible((v) => !v);
     try {
@@ -52,6 +48,7 @@ export default function Login() {
     setVisible((v) => !v);
   };
 
+  //A form checking function to make sure the email is valid
   const form = useForm({
     initialValues: {
       email: '',
@@ -62,6 +59,7 @@ export default function Login() {
     },
   });
 
+  //Sign in with Google
   const signInWithGoogleButton = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -119,7 +117,10 @@ export default function Login() {
             <Button
               variant="gradient"
               gradient={{ from: 'teal', to: 'lime', deg: 60 }}
-              onClick={registerButton}
+              onClick={() => {
+                setShowLoginModal(false);
+                setShowRegModal(true);
+              }}
             >
               Register Now
             </Button>

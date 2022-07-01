@@ -13,7 +13,7 @@ function App() {
         primaryColor: 'green',
         headings: {
           fontFamily: 'Roboto, sans-serif',
-          sizes: { h1: { fontSize: 40 } },
+          sizes: { h1: { fontSize: 40 }, h2: { fontSize: 28 } },
         },
       }}
     >

@@ -15,21 +15,40 @@ import {
   Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { ReactComponent as ReactLogo } from '../assets/undraw_secure_login_pdn4.svg';
-
-export default function Register() {
+import { ReactComponent as ReactLogo } from '../assets/undraw_reg.svg';
+export default function Register({ setShowLoginModal, setShowRegModal }) {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const passwordConfirmRef = useRef();
   const [visible, setVisible] = useState(false);
-  const [authFailed, setAuthFailed] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   //REGISTER NEW USER
   const registerButton = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth);
-    } catch (error) {
-      console.log(error.message);
+    setVisible((v) => !v);
+    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
+      setAlertMessage('Passwords must match! Please try again.');
+      setShowAlert(true);
+    } else if (passwordRef.current.value === '') {
+      setAlertMessage('Password field cannot be empty! Please try again.');
+      setShowAlert(true);
+    } else {
+      try {
+        await createUserWithEmailAndPassword(
+          auth,
+          emailRef.current.value,
+          passwordRef.current.value
+        );
+      } catch (error) {
+        setAlertMessage(error.message.slice(9, -1));
+        setShowAlert(true);
+      }
     }
+    passwordRef.current.value = '';
+    passwordConfirmRef.current.value = '';
+
+    setVisible((v) => !v);
   };
 
   const form = useForm({
@@ -45,17 +64,19 @@ export default function Register() {
   return (
     <div style={{ position: 'relative' }}>
       <LoadingOverlay visible={visible} />
-      <Container size={550} px="md">
+      <Container size={600} px="md">
         <LoadingOverlay visible={visible} />
         <Group grow>
-          <Title order={1}>Log In</Title>
-          <Space w="xs"></Space>
+          <Title order={2}>Sign Up</Title>
+          <Space />
+          <Space />
           <ReactLogo height="100px" style={{ marginBottom: '0.5rem' }} />
         </Group>
-
         <Divider></Divider>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <TextInput
+            required
+            label="Your Email:"
             placeholder="Email"
             {...form.getInputProps('email')}
             ref={emailRef}
@@ -63,33 +84,57 @@ export default function Register() {
             style={{ marginTop: '3rem' }}
           />
           <PasswordInput
+            required
+            label="Your Password:"
             placeholder="Password"
             ref={passwordRef}
             icon={<FaLock />}
             style={{ marginTop: '1rem' }}
           />
+          <PasswordInput
+            required
+            label="Confirm Password:"
+            placeholder="Confirm Password"
+            ref={passwordConfirmRef}
+            icon={<FaLock />}
+            style={{ marginTop: '1rem' }}
+          />
           <Button
-            color="cyan"
             variant="gradient"
             type="submit"
             fullWidth
             onClick={registerButton}
             style={{ marginTop: '5rem' }}
           >
-            LOG IN
+            Register Now
           </Button>
         </form>
         <Space h="xl" />
-        {authFailed && (
+        <Button
+          fullWidth
+          variant="subtle"
+          color="gray"
+          onClick={() => {
+            setShowRegModal(false);
+            setShowLoginModal(true);
+          }}
+        >
+          <span style={{ textDecoration: 'underline' }}>
+            Already have an account, or want to sign in with Google?
+          </span>
+        </Button>
+
+        <Space h="xl" />
+        {showAlert && (
           <Alert
             icon={<FaExclamationCircle size={16} />}
             title="Oops!"
             color="red"
             radius="lg"
             withCloseButton
-            onClick={() => setAuthFailed((v) => !v)}
+            onClick={() => setShowAlert((v) => !v)}
           >
-            We don't recognize your username or password. Please try again!
+            {alertMessage}
           </Alert>
         )}
       </Container>
