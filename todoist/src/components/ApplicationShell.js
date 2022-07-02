@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login';
-import MenuIcons from './MenuIcons';
+
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import {
   AppShell,
   Navbar,
-  Header,
-  Footer,
   Text,
-  MediaQuery,
-  Burger,
   useMantineTheme,
   Button,
   Paper,
   Modal,
 } from '@mantine/core';
 import Register from './Register';
+import ApplicationHeader from './ApplicationHeader';
 
 export default function ApplicationShell({ setColorScheme, colorScheme }) {
   const theme = useMantineTheme();
@@ -73,40 +70,23 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
           <Text>Application navbar</Text>
         </Navbar>
       }
-      footer={
-        <Footer height={40} p="md">
-          <Text>Application Footer</Text>
-        </Footer>
-      }
       header={
-        <Header height={60} p="md">
-          <div style={{ display: 'flex', height: '100%' }}>
-            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-              <Burger
-                opened={opened}
-                onClick={() => setOpened((o) => !o)}
-                size="sm"
-                color={theme.colors.gray[7]}
-                mr="xl"
-              />
-            </MediaQuery>
-            <div style={{ marginLeft: 'auto' }}>
-              <MenuIcons
-                setColorScheme={setColorScheme}
-                colorScheme={colorScheme}
-                currUser={currUser}
-                loggedIn={loggedIn}
-                setShowLoginModal={setShowLoginModal}
-                setShowRegModal={setShowRegModal}
-              />
-            </div>
-          </div>
-        </Header>
+        <ApplicationHeader
+          opened={opened}
+          setOpened={setOpened}
+          theme={theme}
+          setColorScheme={setColorScheme}
+          colorScheme={colorScheme}
+          currUser={currUser}
+          loggedIn={loggedIn}
+          setShowLoginModal={setShowLoginModal}
+          setShowRegModal={setShowRegModal}
+        />
       }
     >
       {/*Login Modal*/}
       <Modal
-        size="lg"
+        size="md"
         opened={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       >
@@ -117,7 +97,7 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
       </Modal>
 
       <Modal
-        size="lg"
+        size="sm"
         opened={showRegModal}
         onClose={() => setShowRegModal(false)}
       >

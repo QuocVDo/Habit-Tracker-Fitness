@@ -9,7 +9,7 @@ import { auth } from '../firebase';
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
 } from 'firebase/auth';
 import {
   Title,
@@ -21,6 +21,7 @@ import {
   Group,
   Alert,
   LoadingOverlay,
+  MediaQuery,
   Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -63,7 +64,7 @@ export default function Login({ setShowRegModal, setShowLoginModal }) {
   const signInWithGoogleButton = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       setAuthFailed(true);
     }
@@ -72,74 +73,76 @@ export default function Login({ setShowRegModal, setShowLoginModal }) {
   return (
     <div style={{ position: 'relative' }}>
       <LoadingOverlay visible={visible} />
-      <Container size={550} px="md">
-        <LoadingOverlay visible={visible} />
-        <Group grow>
-          <Title order={1}>Log In</Title>
+      <Container>
+        <Group grow position="apart">
+          <MediaQuery smallerThan="sm" styles={{ fontSize: '20px' }}>
+            <Title order={2}>Log In</Title>
+          </MediaQuery>
+
           <Space w="xs"></Space>
           <ReactLogo height="100px" style={{ marginBottom: '0.5rem' }} />
         </Group>
-
-        <Divider></Divider>
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <TextInput
-            placeholder="Email"
-            {...form.getInputProps('email')}
-            ref={emailRef}
-            icon={<FaEnvelope />}
-            style={{ marginTop: '3rem' }}
-          />
-          <PasswordInput
-            placeholder="Password"
-            ref={passwordRef}
-            icon={<FaLock />}
-            style={{ marginTop: '1rem' }}
-          />
-          <Button
-            color="cyan"
-            variant="gradient"
-            type="submit"
-            fullWidth
-            onClick={loginButton}
-            style={{ marginTop: '5rem' }}
-          >
-            LOG IN
-          </Button>
-          <Group grow style={{ marginTop: '1rem', marginBottom: '4rem' }}>
-            <Button
-              color="red"
-              gradient={{ from: 'blue', to: 'teal', deg: 40 }}
-              leftIcon={<FaGoogle />}
-              onClick={signInWithGoogleButton}
-            >
-              Sign in with Google
-            </Button>
-            <Button
-              variant="gradient"
-              gradient={{ from: 'teal', to: 'lime', deg: 60 }}
-              onClick={() => {
-                setShowLoginModal(false);
-                setShowRegModal(true);
-              }}
-            >
-              Register Now
-            </Button>
-          </Group>
-        </form>
-        <Space h="xl" />
-        {authFailed && (
-          <Alert
-            icon={<FaExclamationCircle size={16} />}
-            title="Oops!"
-            color="red"
-            radius="lg"
-            withCloseButton
-            onClick={() => setAuthFailed((v) => !v)}
-          >
-            We don't recognize your username or password. Please try again!
-          </Alert>
-        )}
       </Container>
+
+      <Divider></Divider>
+      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <TextInput
+          placeholder="Email"
+          {...form.getInputProps('email')}
+          ref={emailRef}
+          icon={<FaEnvelope />}
+          style={{ marginTop: '3rem' }}
+        />
+        <PasswordInput
+          placeholder="Password"
+          ref={passwordRef}
+          icon={<FaLock />}
+          style={{ marginTop: '1rem' }}
+        />
+        <Button
+          color="cyan"
+          variant="gradient"
+          type="submit"
+          fullWidth
+          onClick={loginButton}
+          style={{ marginTop: '3rem' }}
+        >
+          LOG IN
+        </Button>
+        <Group grow style={{ marginTop: '1rem', marginBottom: '2rem' }}>
+          <Button
+            color="red"
+            gradient={{ from: 'blue', to: 'teal', deg: 40 }}
+            leftIcon={<FaGoogle />}
+            onClick={signInWithGoogleButton}
+          >
+            Sign in with Google
+          </Button>
+          <Button
+            variant="gradient"
+            gradient={{ from: 'teal', to: 'lime', deg: 60 }}
+            onClick={() => {
+              setShowLoginModal(false);
+              setShowRegModal(true);
+            }}
+          >
+            Register Now
+          </Button>
+        </Group>
+      </form>
+      <Space h="xl" />
+      {authFailed && (
+        <Alert
+          icon={<FaExclamationCircle size={16} />}
+          title="Oops!"
+          color="red"
+          radius="lg"
+          withCloseButton
+          onClick={() => setAuthFailed((v) => !v)}
+        >
+          We don't recognize your username or password. Please try again!
+        </Alert>
+      )}
     </div>
   );
 }

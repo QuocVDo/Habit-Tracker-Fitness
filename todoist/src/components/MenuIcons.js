@@ -59,7 +59,7 @@ export default function MenuIcons({
   }
 
   return (
-    <Group spacing="xs">
+    <Group spacing="xs" noWrap>
       {showDarkButton ? (
         <ActionIcon
           variant="default"
@@ -105,7 +105,7 @@ export default function MenuIcons({
           color="dark"
           variant="filled"
         >
-          Register Now
+          Sign Up
         </Button>
       )}
 
@@ -118,7 +118,7 @@ export default function MenuIcons({
           }
           transition="fade"
           shadow="md"
-          size={400}
+          size={350}
         >
           <UserAvatarAndEmail />
 

@@ -64,11 +64,9 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
   return (
     <div style={{ position: 'relative' }}>
       <LoadingOverlay visible={visible} />
-      <Container size={600} px="md">
-        <LoadingOverlay visible={visible} />
+      <Container size="sm" padding="xs">
         <Group grow>
-          <Title order={2}>Sign Up</Title>
-          <Space />
+          <Title order={4}>Sign Up</Title>
           <Space />
           <ReactLogo height="100px" style={{ marginBottom: '0.5rem' }} />
         </Group>
@@ -104,12 +102,12 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
             type="submit"
             fullWidth
             onClick={registerButton}
-            style={{ marginTop: '5rem' }}
+            style={{ marginTop: '3rem' }}
           >
             Register Now
           </Button>
         </form>
-        <Space h="xl" />
+        <Space h="sm" />
         <Button
           fullWidth
           variant="subtle"
