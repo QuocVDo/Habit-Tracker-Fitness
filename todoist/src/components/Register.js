@@ -68,7 +68,7 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
         <Group grow>
           <Title order={4}>Sign Up</Title>
           <Space />
-          <ReactLogo height="100px" style={{ marginBottom: '0.5rem' }} />
+          <ReactLogo height="70px" style={{ marginBottom: '0.5rem' }} />
         </Group>
         <Divider></Divider>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -79,7 +79,7 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
             {...form.getInputProps('email')}
             ref={emailRef}
             icon={<FaEnvelope />}
-            style={{ marginTop: '3rem' }}
+            style={{ marginTop: '2rem' }}
           />
           <PasswordInput
             required
@@ -87,7 +87,7 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
             placeholder="Password"
             ref={passwordRef}
             icon={<FaLock />}
-            style={{ marginTop: '1rem' }}
+            style={{ marginTop: '.75rem' }}
           />
           <PasswordInput
             required
@@ -95,14 +95,14 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
             placeholder="Confirm Password"
             ref={passwordConfirmRef}
             icon={<FaLock />}
-            style={{ marginTop: '1rem' }}
+            style={{ marginTop: '.75rem' }}
           />
           <Button
             variant="gradient"
             type="submit"
             fullWidth
             onClick={registerButton}
-            style={{ marginTop: '3rem' }}
+            style={{ marginTop: '2rem' }}
           >
             Register Now
           </Button>

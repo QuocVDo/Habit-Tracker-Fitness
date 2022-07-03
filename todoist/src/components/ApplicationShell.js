@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login';
-
+import Content from './Content';
+import Register from './Register';
+import Fitness from './Fitness';
+import ApplicationHeader from './ApplicationHeader';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
-import {
-  AppShell,
-  Navbar,
-  Text,
-  useMantineTheme,
-  Button,
-  Paper,
-  Modal,
-} from '@mantine/core';
-import Register from './Register';
-import ApplicationHeader from './ApplicationHeader';
+import { AppShell, Navbar, Text, useMantineTheme, Modal } from '@mantine/core';
 
 export default function ApplicationShell({ setColorScheme, colorScheme }) {
   const theme = useMantineTheme();
@@ -33,6 +26,9 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
   //State for opening and closing the Reg Modal
   const [showRegModal, setShowRegModal] = useState(false);
 
+  //State for knowing what main content to render
+  const [contentState, setContentState] = useState('');
+
   //UseEffect hook + onAuthStateChanged in order to
   //Respond to changes in Authentication state.
   useEffect(() => {
@@ -47,6 +43,19 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
       }
     });
   }, []);
+
+  //CONDITIONAL IF COMPONENT for rendering Content Body
+  //Takes in a conditinonal, and different components
+  //Depending on the value of the conditional, it renders
+  //A different componenet
+  const IfContent = ({ conditional, children }) => {
+    if (conditional === '') {
+      return children[0];
+    } else if (conditional === 'fitness') {
+      return children[1];
+    }
+    return null;
+  };
 
   return (
     <AppShell
@@ -65,7 +74,7 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
           p="md"
           hiddenBreakpoint="sm"
           hidden={!opened}
-          width={{ sm: 200, lg: 300 }}
+          width={{ sm: 300, lg: 400 }}
         >
           <Text>Application navbar</Text>
         </Navbar>
@@ -96,6 +105,7 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
         />
       </Modal>
 
+      {/*Register Modal*/}
       <Modal
         size="sm"
         opened={showRegModal}
@@ -107,12 +117,15 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
         />
       </Modal>
 
-      <Paper shadow="xs" p="xl">
-        <Text>Resize app to see responsive navbar in action</Text>
-        <Button variant="gradient" color="cyan">
-          Button
-        </Button>
-      </Paper>
+      <IfContent conditional={contentState}>
+        <Content
+          loggedIn={loggedIn}
+          currUser={currUser}
+          setShowLoginModal={setShowLoginModal}
+          setContentState={setContentState}
+        />
+        <Fitness setContentState={setContentState} />
+      </IfContent>
     </AppShell>
   );
 }

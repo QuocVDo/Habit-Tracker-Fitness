@@ -112,6 +112,7 @@ export default function Login({ setShowRegModal, setShowLoginModal }) {
         <Group grow style={{ marginTop: '1rem', marginBottom: '2rem' }}>
           <Button
             color="red"
+            title="Sign in With Google"
             gradient={{ from: 'blue', to: 'teal', deg: 40 }}
             leftIcon={<FaGoogle />}
             onClick={signInWithGoogleButton}
