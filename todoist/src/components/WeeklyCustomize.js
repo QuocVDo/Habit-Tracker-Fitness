@@ -35,7 +35,7 @@ export default function WeeklyCustomize({ currUser }) {
     };
 
     fetchData();
-  }, []);
+  }, [currUser.uid]);
 
   //DEBUG FUNCTION: print out all items within the l ist
   function printList() {
