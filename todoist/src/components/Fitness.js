@@ -53,17 +53,19 @@ export default function Fitness({ setContentState, currUser }) {
       <Paper shadow="sm" p="md">
         <Group style={{ marginBottom: '1rem' }} grow>
           <Title order={4}>Today's Workout</Title>
-
-          <Button
-            compact
-            variant="gradient"
-            size="xs"
-            onClick={() => setShowCustomize((e) => !e)}
-          >
-            Customize Workout
-          </Button>
+          {!showCustomize && (
+            <Button
+              compact
+              variant="gradient"
+              size="xs"
+              onClick={() => setShowCustomize((e) => !e)}
+            >
+              Customize Workout
+            </Button>
+          )}
         </Group>
         <Divider />
+
         {showCustomize && <WeeklyCustomize currUser={currUser} />}
       </Paper>
     </SimpleGrid>
