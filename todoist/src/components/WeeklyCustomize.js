@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Container, Button, Text } from '@mantine/core';
 import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+} from 'firebase/firestore';
 
 export default function WeeklyCustomize({ currUser }) {
   const [activeTab, setActiveTab] = useState(0);
@@ -26,10 +33,15 @@ export default function WeeklyCustomize({ currUser }) {
       else {
         querySnapshot.forEach((doc) => {
           // Print all documents with matching uid
-          console.log(doc.id, ' => ', doc.data());
+          //console.log(doc.id, ' => ', doc.data());
+
+          //Create a new object that  contains doc data + doc id
+          //we use the doc id in order to update/delete the doc later
+          let newItem = doc.data();
+          newItem['docId'] = doc.id;
 
           //Add all documents to the list state
-          setList((prevList) => [...prevList, doc.data()]);
+          setList((prevList) => [...prevList, newItem]);
         });
       }
     };
@@ -40,10 +52,7 @@ export default function WeeklyCustomize({ currUser }) {
   //DEBUG FUNCTION: print out all items within the l ist
   function printList() {
     list.forEach((element) => {
-      //console.log(element);
-      if (element.day === activeTab.toString()) {
-        console.log(element);
-      }
+      console.log(element);
     });
   }
 
@@ -59,23 +68,34 @@ export default function WeeklyCustomize({ currUser }) {
       <Container p="xs">
         <Button onClick={() => setList([{}])}>Clear</Button>
         <Button onClick={printList}>DEBUG: Print value of list</Button>
-        <Button onClick={() => console.log(currTask)}>
-          DEBUG: Print DayObject
-        </Button>
         <TaskItem {...currTask}></TaskItem>
       </Container>
     );
   }
 
-  function TaskItem({ day, uid, exercise, sets, reps, weight }) {
+  //PUSH CHANGES TO DATABASE
+  //Takes in a reference to the doc we want to modify, as well as the object
+  //containing the changes
+  async function updateDoc(docRef) {
+    //Merge will add to the old document.
+    await setDoc(docRef, { reps: 10 }).then(() => {
+      console.log('Updated Doc');
+    });
+  }
+
+  function TaskItem({ day, uid, exercise, sets, reps, weight, docId }) {
+    const docRef = doc(db, 'Workouts', docId);
+
     return (
       <Container p="xs">
         <Text>Day: {day}</Text>
+        <Text>DocId: {docId}</Text>
         <Text>Uid: {uid}</Text>
         <Text>Exercise: {exercise}</Text>
         <Text>Sets: {sets}</Text>
         <Text>Reps: {reps}</Text>
         <Text>Weight: {weight}</Text>
+        <Button onClick={() => updateDoc(docRef)}>Save Changes</Button>
       </Container>
     );
   }
