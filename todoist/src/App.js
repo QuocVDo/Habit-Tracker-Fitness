@@ -10,7 +10,7 @@ function App() {
       withNormalizeCSS
       theme={{
         colorScheme: colorScheme,
-        primaryColor: 'green',
+        primaryColor: 'blue',
         headings: {
           fontFamily: 'Roboto, sans-serif',
           sizes: { h1: { fontSize: 40 }, h2: { fontSize: 28 } },

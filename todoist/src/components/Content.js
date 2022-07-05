@@ -15,7 +15,7 @@ export default function Content({
     if (!loggedIn) {
       setShowLoginModal(true);
     } else {
-      setContentState('fitness');
+      setContentState(1);
     }
   };
 
@@ -24,7 +24,7 @@ export default function Content({
     if (!loggedIn) {
       setShowLoginModal(true);
     } else {
-      console.log('logged in');
+      console.log(2);
     }
   };
 
@@ -33,7 +33,7 @@ export default function Content({
     if (!loggedIn) {
       setShowLoginModal(true);
     } else {
-      console.log('logged in');
+      console.log(3);
     }
   };
 
