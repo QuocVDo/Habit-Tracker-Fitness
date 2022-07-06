@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Container, Button, Text } from '@mantine/core';
+import { Tabs, Container, Button, Text, Input } from '@mantine/core';
 import { db } from '../firebase';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 
 export default function WeeklyCustomize({ currUser }) {
   const [activeTab, setActiveTab] = useState(0);
-  const [list, setList] = useState({});
+  const [list, setList] = useState([]);
 
   //Use Effect, When component mounts we  will fetch the
   //workout data from the database with matching UIDs
@@ -34,35 +34,51 @@ export default function WeeklyCustomize({ currUser }) {
     console.log(list);
   }
 
+  //DEBUG FUNCTION: general purpose
+  function printDebug() {
+    /* FOR UPDATING A STATE ARRAY IN
+    const newListState = [...list];
+    newListState[0].exercise = 'Bench Press';
+    setList(newListState);
+    */
+
+    const newList = { ...list };
+    newList[0].exercise = 'Super Bench Press';
+    setList(newList);
+  }
+
   function TaskList() {
     let currTask = list[activeTab];
     return (
       <Container p="xs">
         <Button onClick={() => setList([{}])}>Clear</Button>
         <Button onClick={printList}>DEBUG: Print value of list</Button>
+        <Button onClick={printDebug}>DEBUG</Button>
         <TaskItem {...currTask}></TaskItem>
+        <Button onClick={updateDatabase}>Save Changes</Button>
       </Container>
     );
   }
 
   //PUSH CHANGES TO DATABASE
-  //Takes in the id of the doc we want to modify
-  //containing the changes
   async function updateDatabase() {
-    const docRef = doc(db, 'Workouts', currUser.uid);
+    const docRef = doc(db, 'workouts', currUser.uid);
+
     //Merge will add to the old document.
-    await setDoc(docRef, { reps: 10 }, { merge: true }).then(() => {
+
+    await setDoc(docRef, list, { merge: true }).then(() => {
       console.log('Updated Doc');
     });
   }
 
-  function TaskItem({ exercise, reps, weight }) {
+  function TaskItem({ exercise, reps, weight, sets }) {
     return (
-      <Container p="xs">
+      <Container size="md" p="xs">
+        <Input placeholder="exercise"></Input>
         <Text>Exercise: {exercise}</Text>
         <Text>Reps: {reps}</Text>
+        <Text> Sets: {sets} </Text>
         <Text>Weight: {weight}</Text>
-        <Button onClick={updateDatabase}>Save Changes</Button>
       </Container>
     );
   }
