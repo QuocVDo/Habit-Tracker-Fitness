@@ -1,48 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Container, Button, Text } from '@mantine/core';
 import { db } from '../firebase';
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  setDoc,
-} from 'firebase/firestore';
+import { getDoc, doc, setDoc } from 'firebase/firestore';
 
 export default function WeeklyCustomize({ currUser }) {
   const [activeTab, setActiveTab] = useState(0);
-  const [list, setList] = useState([]);
+  const [list, setList] = useState({});
 
   //Use Effect, When component mounts we  will fetch the
   //workout data from the database with matching UIDs
   useEffect(() => {
     const fetchData = async () => {
-      const q = query(
-        collection(db, 'Workouts'),
-        where('uid', '==', currUser.uid)
-      );
+      //Get a reference to the doc, then fetch teh doc
+      const docRef = doc(db, 'workouts', currUser.uid);
+      const docSnap = await getDoc(docRef);
 
-      const querySnapshot = await getDocs(q);
-      //If query from database is empty log that it is empty for now
-      //ideally we show a message to the user that they need to  customize
-      if (querySnapshot.empty) {
-        console.log('QUERY IS EMPTY');
+      //If the doc exists then we add to state
+      if (docSnap.exists()) {
+        setList(docSnap.data());
       }
-      //If query from database is not empty then we add to list
+      //If doc doesn't exist, log that it doesn't exist
+      //Ideally we need to create a new doc and add it to state.
       else {
-        querySnapshot.forEach((doc) => {
-          // Print all documents with matching uid
-          //console.log(doc.id, ' => ', doc.data());
-
-          //Create a new object that  contains doc data + doc id
-          //we use the doc id in order to update/delete the doc later
-          let newItem = doc.data();
-          newItem['docId'] = doc.id;
-
-          //Add all documents to the list state
-          setList((prevList) => [...prevList, newItem]);
-        });
+        console.log('Query does not exist', currUser.uid);
       }
     };
 
@@ -51,19 +31,11 @@ export default function WeeklyCustomize({ currUser }) {
 
   //DEBUG FUNCTION: print out all items within the l ist
   function printList() {
-    list.forEach((element) => {
-      console.log(element);
-    });
+    console.log(list);
   }
 
   function TaskList() {
-    let currTask;
-    list.forEach((element) => {
-      //console.log(element);
-      if (element.day === activeTab.toString()) {
-        currTask = element;
-      }
-    });
+    let currTask = list[activeTab];
     return (
       <Container p="xs">
         <Button onClick={() => setList([{}])}>Clear</Button>
@@ -74,28 +46,23 @@ export default function WeeklyCustomize({ currUser }) {
   }
 
   //PUSH CHANGES TO DATABASE
-  //Takes in a reference to the doc we want to modify, as well as the object
+  //Takes in the id of the doc we want to modify
   //containing the changes
-  async function updateDoc(docRef) {
+  async function updateDatabase() {
+    const docRef = doc(db, 'Workouts', currUser.uid);
     //Merge will add to the old document.
-    await setDoc(docRef, { reps: 10 }).then(() => {
+    await setDoc(docRef, { reps: 10 }, { merge: true }).then(() => {
       console.log('Updated Doc');
     });
   }
 
-  function TaskItem({ day, uid, exercise, sets, reps, weight, docId }) {
-    const docRef = doc(db, 'Workouts', docId);
-
+  function TaskItem({ exercise, reps, weight }) {
     return (
       <Container p="xs">
-        <Text>Day: {day}</Text>
-        <Text>DocId: {docId}</Text>
-        <Text>Uid: {uid}</Text>
         <Text>Exercise: {exercise}</Text>
-        <Text>Sets: {sets}</Text>
         <Text>Reps: {reps}</Text>
         <Text>Weight: {weight}</Text>
-        <Button onClick={() => updateDoc(docRef)}>Save Changes</Button>
+        <Button onClick={updateDatabase}>Save Changes</Button>
       </Container>
     );
   }
