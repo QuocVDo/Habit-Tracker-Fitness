@@ -1,2 +1,2 @@
-# TODOIST-Clone
-This ia a clone of the popular todo list app, todoist.
+# WIP
+# Personal Project with Habit Tracker
