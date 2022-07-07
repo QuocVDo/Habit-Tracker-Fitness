@@ -52,7 +52,9 @@ export default function Fitness({ setContentState, currUser }) {
 
       <Paper shadow="sm" p="md">
         <Group style={{ marginBottom: '1rem' }} grow>
-          <Title order={4}>Today's Workout</Title>
+          <Title order={4}>
+            {!showCustomize ? "Today's Workout" : 'Customize Workout'}
+          </Title>
           {!showCustomize && (
             <Button
               compact
@@ -66,7 +68,12 @@ export default function Fitness({ setContentState, currUser }) {
         </Group>
         <Divider />
 
-        {showCustomize && <WeeklyCustomize currUser={currUser} />}
+        {showCustomize && (
+          <WeeklyCustomize
+            currUser={currUser}
+            setShowCustomize={setShowCustomize}
+          />
+        )}
       </Paper>
     </SimpleGrid>
   );
