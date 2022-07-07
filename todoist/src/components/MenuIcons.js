@@ -35,7 +35,7 @@ export default function MenuIcons({
   //Sign out Button (Placeholder)
   const signOutButton = async () => {
     try {
-      await signOut(auth);
+      await signOut(auth).then(window.location.reload(false));
     } catch (error) {
       console.log(error.message);
     }
