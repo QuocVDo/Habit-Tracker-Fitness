@@ -118,7 +118,7 @@ export default function Register({ setShowLoginModal, setShowRegModal }) {
           }}
         >
           <span style={{ textDecoration: 'underline' }}>
-            Already have an account, or want to sign in with Google?
+            Already have an account? Sign in Here
           </span>
         </Button>
 
