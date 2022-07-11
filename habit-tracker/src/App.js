@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MantineProvider } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 import ApplicationShell from './components/ApplicationShell';
 
 function App() {
@@ -16,10 +17,12 @@ function App() {
         },
       }}
     >
-      <ApplicationShell
-        setColorScheme={setColorScheme}
-        colorScheme={colorScheme}
-      />
+      <NotificationsProvider position="bottom-right">
+        <ApplicationShell
+          setColorScheme={setColorScheme}
+          colorScheme={colorScheme}
+        />
+      </NotificationsProvider>
     </MantineProvider>
   );
 }

@@ -11,14 +11,18 @@ import {
   NumberInput,
   Modal,
   Alert,
+  LoadingOverlay,
 } from '@mantine/core';
-import { FaExclamationTriangle } from 'react-icons/fa';
+import { FaExclamationTriangle, FaCheck } from 'react-icons/fa';
+import { showNotification } from '@mantine/notifications';
 
 export default function WeeklyCustomize({ currUser, setShowCustomize }) {
   const [activeTab, setActiveTab] = useState(0);
   const [list, setList] = useState([{}]);
   const [forceRender, setForceRender] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
+  const [showLoad, setShowLoad] = useState(false);
+  const [saveLoad, setSaveLoad] = useState(false);
 
   //Use Effect, When component mounts we  will fetch the
   //workout data from the database with matching UIDs
@@ -61,8 +65,9 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
           console.log('Created New Doc');
         });
       }
+      setShowLoad(false);
     };
-
+    setShowLoad(true);
     fetchData();
   }, [currUser.uid]);
 
@@ -166,7 +171,11 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
         ))}
 
         <Group position="center">
-          <Button className="save-button" onClick={updateDatabase}>
+          <Button
+            className="save-button"
+            onClick={updateDatabase}
+            loading={saveLoad}
+          >
             Save Changes
           </Button>
           <Button
@@ -183,17 +192,30 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
 
   //PUSH CHANGES TO DATABASE
   async function updateDatabase() {
+    //Make the button load
+    setSaveLoad(true);
+
+    //Create reference to the user's workout document in DB
     const docRef = doc(db, 'workouts', currUser.uid);
 
-    //Merge will add to the old document.  The changes we push are the
+    //Replace old document with new one.  The changes we push are the
     //updated list object which contains all the new state information.
     await setDoc(docRef, list).then(() => {
-      console.log('Updated Doc');
+      setSaveLoad(false);
+      setShowCustomize(false);
+      showNotification({
+        title: `Success!`,
+        color: 'teal',
+        icon: <FaCheck />,
+        message: 'Your workout has been succesfully saved',
+        autoClose: false,
+      });
     });
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <LoadingOverlay visible={showLoad} />
       <Modal
         size="md"
         centered

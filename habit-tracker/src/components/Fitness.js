@@ -12,6 +12,7 @@ import {
 import { Calendar } from '@mantine/dates';
 import { FaArrowLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import WeeklyCustomize from './WeeklyCustomize';
+import WorkoutTodos from './WorkoutTodos';
 
 export default function Fitness({ setContentState, currUser }) {
   const [dateSelected, setDateSelected] = useState(new Date());
@@ -68,11 +69,13 @@ export default function Fitness({ setContentState, currUser }) {
         </Group>
         <Divider />
 
-        {showCustomize && (
+        {showCustomize ? (
           <WeeklyCustomize
             currUser={currUser}
             setShowCustomize={setShowCustomize}
           />
+        ) : (
+          <WorkoutTodos currUser={currUser} dateSelected={dateSelected} />
         )}
       </Paper>
     </SimpleGrid>
