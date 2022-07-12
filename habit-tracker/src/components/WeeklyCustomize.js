@@ -13,7 +13,11 @@ import {
   Alert,
   LoadingOverlay,
 } from '@mantine/core';
-import { FaExclamationTriangle, FaCheck } from 'react-icons/fa';
+import {
+  FaExclamationTriangle,
+  FaCheck,
+  FaExclamationCircle,
+} from 'react-icons/fa';
 import { showNotification } from '@mantine/notifications';
 
 export default function WeeklyCustomize({ currUser, setShowCustomize }) {
@@ -23,6 +27,7 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
   const [cancelModal, setCancelModal] = useState(false);
   const [showLoad, setShowLoad] = useState(false);
   const [saveLoad, setSaveLoad] = useState(false);
+  const [invalid, setInvalid] = useState(false);
 
   //Use Effect, When component mounts we  will fetch the
   //workout data from the database with matching UIDs
@@ -62,7 +67,6 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
         await setDoc(newDocRef, newList).then(() => {
           //After  doc has been sucesfully created we then add it to state
           setList(newList);
-          console.log('Created New Doc');
         });
       }
       setShowLoad(false);
@@ -140,19 +144,26 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
             />
             <Group noWrap style={{ marginTop: '0.5rem' }}>
               <NumberInput
+                min={1}
+                required
+                description="Min is 1"
                 defaultValue={element.reps}
                 onChange={(val) => updateReps(val, index)}
                 label="Reps"
               />
               <NumberInput
+                min={1}
+                required
+                description="Min is 1"
                 defaultValue={element.sets}
                 onChange={(val) => updateSets(val, index)}
                 label="Sets"
               />
               <NumberInput
+                description="Optional"
                 defaultValue={element.weight}
                 onChange={(val) => updateWeight(val, index)}
-                label="Weight"
+                label="Weight (lb)"
               />
             </Group>
             {currTask.length - 1 === index && (
@@ -186,6 +197,20 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
             Cancel
           </Button>
         </Group>
+        {invalid && (
+          <Alert
+            className="invalid-alert"
+            title="Required Fields are Empty"
+            color="red"
+            icon={<FaExclamationCircle />}
+            onClose={() => setInvalid(false)}
+            withCloseButton
+          >
+            If you have filled out a name for an exercise, then you must also
+            fill out the number of reps and the number of sets. Please enter a
+            valid value for reps and sets for all exercises!
+          </Alert>
+        )}
       </Container>
     );
   }
@@ -193,13 +218,34 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
   //PUSH CHANGES TO DATABASE
   async function updateDatabase() {
     //Make the button load
-    setSaveLoad(true);
+    //setSaveLoad(true);
+
+    //Check to see if Reps and Sets field are filled out properly
+    for (const entry in list) {
+      for (const workout in list[entry]) {
+        //DEBUG
+        //console.log(list[entry][workout]);
+        let currWorkout = list[entry][workout];
+
+        //If exercise is empty then we can ignore it.
+        //Else we check to see if either the reps or sets have been filled out
+        //If they haven't been filled out. Then we can raise an error.
+        if (
+          currWorkout.exercise !== '' &&
+          (currWorkout.reps == null || currWorkout.sets == null)
+        ) {
+          setInvalid(true);
+          return;
+        }
+      }
+    }
 
     //Create reference to the user's workout document in DB
     const docRef = doc(db, 'workouts', currUser.uid);
 
     //Replace old document with new one.  The changes we push are the
     //updated list object which contains all the new state information.
+
     await setDoc(docRef, list).then(() => {
       setSaveLoad(false);
       setShowCustomize(false);
@@ -229,6 +275,7 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
 
         <Group className="button-group" position="center" grow>
           <Button onClick={() => setCancelModal(false)}>Keep Editing</Button>
+
           <Button color="red" onClick={() => setShowCustomize(false)}>
             Don't Save
           </Button>

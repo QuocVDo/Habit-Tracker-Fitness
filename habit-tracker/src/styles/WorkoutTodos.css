@@ -4,4 +4,13 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 200px;
+  justify-items: center;
+}
+
+.todo-item {
+  margin-top: 1rem;
+}
+
+.divider {
+  margin-bottom: 1rem;
 }
