@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import {
   Checkbox,
   Container,
-  Button,
   Group,
   Divider,
   Badge,
+  Tooltip,
 } from '@mantine/core';
 import {
   collection,
@@ -55,9 +55,13 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
       //Search for selected d ate's workout log
       const querySnapshot = await getDocs(q);
 
-      //If we looked for selected date's workout log, and found nothing
-      //We need to create a new one from the workout plan.
-      if (querySnapshot.empty) {
+      //If there is no workout log create the todo list from workout plan
+      //If there is no workout plan or the workout plan is empty then show noWorkout
+      //Only push log to database for current DAY.
+      if (
+        querySnapshot.empty &&
+        dateSelected.setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)
+      ) {
         //Fetch the workout plan
         const docRef = doc(db, 'workouts', currUser.uid);
         const docSnap = await getDoc(docRef);
@@ -105,16 +109,15 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
             }
           }
 
-          //Remove last index so there is no divider after last workout
-          //setIndexArray((prev) => [...prev].slice(0, -1));
-
           //IF THERE ARE NO WORKOUTS PLANNED for today, display message
           if (Object.keys(plan).length === 1 && plan[0].exercise === '') {
             setNoWorkout(true);
           }
-          //otherwise we have Succesfully created a workout plan, now we add to database as well
-          //Update the state with the generated log
-          else {
+          //If we succesfully created a workout, add to database if the day is today.
+          else if (
+            dateSelected.setHours(0, 0, 0, 0) ===
+            new Date().setHours(0, 0, 0, 0)
+          ) {
             setNoWorkout(false);
 
             const docRef = await addDoc(collection(db, 'workout-logs'), {
@@ -123,6 +126,13 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
               log: log,
             }).then(setTodaysWorkout(log));
             setTodaysDoc(docRef.id);
+          }
+          //Else we created a workout, but the  date is not today so just display the plan
+          //but don't  update database yet (OPTIMIZATION)
+          else {
+            setNoWorkout(false);
+            setTodaysDoc(docRef.id);
+            setTodaysWorkout(log);
           }
         }
 
@@ -134,7 +144,16 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
         }
       }
 
-      //If a doc already exists, retrieve the data then populate values.
+      //If no doc exists for a day in the past, display the NO Workout
+      //There was no  workout planned for that day, and no workout logged for that day
+      else if (
+        querySnapshot.empty &&
+        dateSelected.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)
+      ) {
+        setNoWorkout(true);
+      }
+
+      //Else the query snapshot is not empty, pull the data from the database
       else {
         querySnapshot.forEach((doc) => {
           let log = doc.data().log;
@@ -164,11 +183,6 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
     fetchData();
   }, [currUser.uid, dateSelected]);
 
-  function printDebug() {
-    console.log(todaysWorkout);
-    console.log(todaysDoc);
-  }
-
   //Update Checkboxes and Database in one go
   async function updateCheck(val, index) {
     let updatedWorkout = [...todaysWorkout];
@@ -184,8 +198,15 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
 
   return (
     <Container className="main-container" size="md" px="md">
-      <Button onClick={printDebug}>DEBUG</Button>
-      {noWorkout && <p>THERE"S NO PLAN PLACEHOLDER</p>}
+      {noWorkout && (
+        <Container className="no-workout" p="sm" size="md">
+          <h2> No Workouts Today</h2>
+          <p>
+            We don't have any planned for the selected date. If you would like
+            to plan a new workout, get started by pressing customize workout.
+          </p>
+        </Container>
+      )}
 
       {todaysWorkout.map((element, index) => (
         <div className="todo-item" key={index}>
@@ -198,19 +219,39 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
               variant="dashed"
             />
           )}
-          <Group noWrap position="apart">
-            <Checkbox
-              size="md"
-              className="checkbox"
-              label={element.exercise}
-              checked={element.done}
-              onChange={(event) =>
-                updateCheck(event.currentTarget.checked, index)
-              }
-            ></Checkbox>
 
-            <Badge radius="md">{element.reps + ' reps'}</Badge>
-          </Group>
+          {dateSelected.toDateString() === new Date().toDateString() ? (
+            <Group noWrap position="apart">
+              <Checkbox
+                size="md"
+                className="checkbox"
+                label={element.exercise}
+                checked={element.done}
+                onChange={(event) =>
+                  updateCheck(event.currentTarget.checked, index)
+                }
+              ></Checkbox>
+
+              <Badge radius="md">{element.reps + ' reps'}</Badge>
+            </Group>
+          ) : (
+            <Group noWrap position="apart">
+              <Tooltip label="You can only modify the workout log for today!">
+                <Checkbox
+                  size="md"
+                  className="checkbox"
+                  label={element.exercise}
+                  checked={element.done}
+                  onChange={(event) =>
+                    updateCheck(event.currentTarget.checked, index)
+                  }
+                  disabled
+                ></Checkbox>
+              </Tooltip>
+
+              <Badge radius="md">{element.reps + ' reps'}</Badge>
+            </Group>
+          )}
         </div>
       ))}
     </Container>
