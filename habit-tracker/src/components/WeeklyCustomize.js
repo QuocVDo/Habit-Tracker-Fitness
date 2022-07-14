@@ -222,6 +222,18 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
 
     //Check to see if Reps and Sets field are filled out properly
     for (const entry in list) {
+      //Check to see if it is a rest day.
+      if (
+        Object.keys(list[entry]).length === 1 &&
+        list[entry][0].exercise === ''
+      ) {
+        /*
+         * TODO:
+         * ADD THE ENTRY to rest days array within database for the month.
+         * */
+        console.log(entry);
+      }
+
       for (const workout in list[entry]) {
         //DEBUG
         //console.log(list[entry][workout]);
@@ -241,12 +253,12 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
     }
 
     //Create reference to the user's workout document in DB
-    const docRef = doc(db, 'workouts', currUser.uid);
+    const workoutRef = doc(db, 'workouts', currUser.uid);
 
     //Replace old document with new one.  The changes we push are the
     //updated list object which contains all the new state information.
 
-    await setDoc(docRef, list).then(() => {
+    await setDoc(workoutRef, list).then(() => {
       setSaveLoad(false);
       setShowCustomize(false);
       showNotification({
@@ -262,6 +274,7 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
   return (
     <div style={{ position: 'relative' }}>
       <LoadingOverlay visible={showLoad} />
+
       <Modal
         size="md"
         centered

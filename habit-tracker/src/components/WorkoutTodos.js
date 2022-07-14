@@ -20,10 +20,15 @@ import {
 import '../styles/WorkoutTodos.css';
 import { db } from '../firebase';
 
-export default function WorkoutTodos({ dateSelected, currUser }) {
+export default function WorkoutTodos({
+  dateSelected,
+  currUser,
+  updateWorkout,
+  todaysDoc,
+  setTodaysDoc,
+}) {
   const [todaysWorkout, setTodaysWorkout] = useState([]);
   const [noWorkout, setNoWorkout] = useState(false);
-  const [todaysDoc, setTodaysDoc] = useState();
   const [indexArray, setIndexArray] = useState([]);
 
   //Use Effect Function, fire upon component render
@@ -181,7 +186,7 @@ export default function WorkoutTodos({ dateSelected, currUser }) {
 
     //Fetch the data
     fetchData();
-  }, [currUser.uid, dateSelected]);
+  }, [currUser.uid, dateSelected, updateWorkout, setTodaysDoc]);
 
   //Update Checkboxes and Database in one go
   async function updateCheck(val, index) {
