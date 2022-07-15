@@ -20,7 +20,11 @@ import {
 } from 'react-icons/fa';
 import { showNotification } from '@mantine/notifications';
 
-export default function WeeklyCustomize({ currUser, setShowCustomize }) {
+export default function WeeklyCustomize({
+  currUser,
+  setShowCustomize,
+  dateSelected,
+}) {
   const [activeTab, setActiveTab] = useState(0);
   const [list, setList] = useState([{}]);
   const [forceRender, setForceRender] = useState(false);
@@ -228,10 +232,22 @@ export default function WeeklyCustomize({ currUser, setShowCustomize }) {
         list[entry][0].exercise === ''
       ) {
         /*
-         * TODO:
-         * ADD THE ENTRY to rest days array within database for the month.
-         * */
-        console.log(entry);
+         * update database with rest days
+         */
+        const docRef = doc(db, 'workout-progress', currUser.uid);
+        const docSnap = await getDoc(docRef);
+
+        const currMonth = new Date().getMonth() + 1;
+        const currYear = new Date().getFullYear();
+        const currMonthYear = currMonth + '-' + currYear;
+
+        if (docSnap.exists() && currMonthYear in docSnap.data()) {
+          let progressLog = docSnap.data();
+          progressLog[currMonthYear]['rest'].push(entry);
+          await setDoc(docRef, progressLog);
+        } else {
+          console.error('Error: No Progress Log found when updating rest days');
+        }
       }
 
       for (const workout in list[entry]) {

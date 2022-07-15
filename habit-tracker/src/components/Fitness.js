@@ -9,7 +9,6 @@ import {
   Button,
   Divider,
   Tooltip,
-  Indicator,
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
 import {
@@ -22,15 +21,7 @@ import {
 import WeeklyCustomize from './WeeklyCustomize';
 import WorkoutTodos from './WorkoutTodos';
 import { db } from '../firebase';
-import {
-  doc,
-  deleteDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-} from 'firebase/firestore';
+import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 
 export default function Fitness({ setContentState, currUser }) {
   const [dateSelected, setDateSelected] = useState(new Date());
@@ -39,41 +30,62 @@ export default function Fitness({ setContentState, currUser }) {
   const [updateWorkout, setUpdateWorkout] = useState(false);
   const [todaysDoc, setTodaysDoc] = useState();
 
+  //States for holding which days are rest days, which are complete, etc.
+  const [restDays, setRestDays] = useState([]);
+  const [completeDays, setCompleteDays] = useState([]);
+  const [progressDays, setProgressDays] = useState([]);
+
   //On mount, retrieve  the data for progress
   useEffect(() => {
-    const month = dateSelected.getMonth() + 1;
-    const year = dateSelected.getFullYear();
-    const monthYear = month + '-' + year;
+    const currMonth = new Date().getMonth() + 1;
+    const currYear = new Date().getFullYear();
+    const currMonthYear = currMonth + '-' + currYear;
 
     //Async function to retrrieve data.
     async function fetchProgress() {
-      const q = query(
-        collection(db, 'workout-progress'),
-        where('uid', '==', currUser.uid),
-        where('date', '==', monthYear)
-      );
-
       //Search for this month's progress log
-      const querySnapshot = await getDocs(q);
+      const docRef = doc(db, 'workout-progress', currUser.uid);
+      const docSnap = await getDoc(docRef);
+      let progressLog = {};
 
-      //If there isn't a progress log for this month then make one.
-      if (querySnapshot.empty) {
-        const newProgressLog = {
-          uid: currUser.uid,
-          date: monthYear,
-          rest: [],
-          completed: [],
-          in_progress: [],
-        };
-        await addDoc(collection(db, 'workout-progress'), newProgressLog);
+      //If docSnap.exists() look to see if the current month is in there, if it isn't
+      //then create one. Else we can just update  state
+      if (docSnap.exists()) {
+        progressLog = docSnap.data();
+
+        //Else we need to add this current month  to the progressLog
+        if (!(currMonthYear in progressLog)) {
+          const arrays = {
+            rest: [],
+            complete: [],
+            in_progress: [],
+          };
+          progressLog[currMonthYear] = arrays;
+          await setDoc(docRef, progressLog);
+        }
+
+        //Update states
+        setCompleteDays(progressLog[currMonthYear]['complete']);
+        setRestDays(progressLog[currMonthYear]['rest']);
+        setProgressDays(progressLog[currMonthYear]['in_progress']);
       }
 
-      //Else there is already a progress log and therefore we should
-      //retrieve the existing one.
+      //Else we  need to make a fresh docSnap and add the current month
       else {
-        querySnapshot.forEach((doc) => {
-          console.log(doc.data());
-        });
+        //Custom object to  push to database, the monthYear is the key
+        //The value is a set of arrays that keep track of completed, rest, and in progress days
+        const arrays = {
+          rest: [],
+          complete: [],
+          in_progress: [],
+        };
+        progressLog[currMonthYear] = arrays;
+        await setDoc(docRef, progressLog);
+
+        //Update states
+        setCompleteDays(progressLog[currMonthYear]['complete']);
+        setRestDays(progressLog[currMonthYear]['rest']);
+        setProgressDays(progressLog[currMonthYear]['in_progress']);
       }
     }
 
@@ -91,7 +103,7 @@ export default function Fitness({ setContentState, currUser }) {
      * In progress = Yellow, Completed = Green.
      *
      */
-  }, [currUser.uid, dateSelected]);
+  }, [currUser.uid]);
 
   //Remove the workout for today.
   async function syncWorkout() {
@@ -104,12 +116,33 @@ export default function Fitness({ setContentState, currUser }) {
   //Have an array of days that we want to style
   //If the array.includes(date.getDate()) then return the styling you want.
   function colorDays(date) {
-    const array = [15, 16];
+    //If date is in the completeDays array
     if (
-      array.includes(date.getDate()) &&
-      date.getDate() !== dateSelected.getDate()
+      completeDays.includes(date.getDate()) &&
+      date.getDate() !== dateSelected.getDate() &&
+      date.getMonth() === dateSelected.getMonth()
     ) {
-      return { backgroundColor: 'green', color: 'white' };
+      return {
+        backgroundColor: 'green',
+        color: 'white',
+        opacity: '0.7',
+        borderRadius: '2px',
+        border: '1px solid black',
+      };
+    }
+    //If date is in the progress days
+    else if (
+      progressDays.includes(date.getDate()) &&
+      date.getDate() !== dateSelected.getDate() &&
+      date.getMonth() === dateSelected.getMonth()
+    ) {
+      return {
+        backgroundColor: 'yellow',
+        color: 'black',
+        opacity: '0.6',
+        border: '1px solid black',
+        borderRadius: '2px',
+      };
     }
   }
 
@@ -118,7 +151,9 @@ export default function Fitness({ setContentState, currUser }) {
     //Months are 0 - 11 (january - december)
     //console.log(dateSelected.getMonth());
 
-    console.log(currUser.uid);
+    console.log(restDays);
+    console.log(completeDays);
+    console.log(progressDays);
   }
 
   return (
@@ -147,25 +182,12 @@ export default function Fitness({ setContentState, currUser }) {
         <Center>
           {showCalendar && (
             <Calendar
+              size="sm"
               firstDayOfWeek="sunday"
               value={dateSelected}
               weekendDays={[]}
               onChange={setDateSelected}
               dayStyle={(date) => colorDays(date)}
-              renderDay={(date) => {
-                const day = date.getDate();
-
-                return (
-                  <Indicator
-                    size={6}
-                    color="red"
-                    offset={8}
-                    disabled={date > 0}
-                  >
-                    <div>{day}</div>
-                  </Indicator>
-                );
-              }}
             />
           )}
         </Center>
@@ -226,6 +248,7 @@ export default function Fitness({ setContentState, currUser }) {
           <WeeklyCustomize
             currUser={currUser}
             setShowCustomize={setShowCustomize}
+            dateSelected={dateSelected}
           />
         ) : (
           <WorkoutTodos
