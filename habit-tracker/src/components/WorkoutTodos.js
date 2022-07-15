@@ -16,6 +16,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  setDoc,
 } from 'firebase/firestore';
 import '../styles/WorkoutTodos.css';
 import { db } from '../firebase';
@@ -26,6 +27,7 @@ export default function WorkoutTodos({
   updateWorkout,
   todaysDoc,
   setTodaysDoc,
+  setProgressUpdate,
 }) {
   const [todaysWorkout, setTodaysWorkout] = useState([]);
   const [noWorkout, setNoWorkout] = useState(false);
@@ -194,11 +196,63 @@ export default function WorkoutTodos({
     updatedWorkout[index].done = val;
     setTodaysWorkout(updatedWorkout);
 
-    //Update Database
+    //Update workout-logs database: check off item.
     const docRef = doc(db, 'workout-logs', todaysDoc);
     await updateDoc(docRef, {
       log: updatedWorkout,
     });
+
+    //Count the number of items complete.
+    let numComplete = 0;
+    for (const entry in updatedWorkout) {
+      //Update numComplete every time we get a true option
+      if (updatedWorkout[entry].done) {
+        numComplete++;
+      }
+    }
+
+    //Get docref for PROGRESS log database
+    const docRefProgress = doc(db, 'workout-progress', currUser.uid);
+    const docSnapProgress = await getDoc(docRefProgress);
+
+    const currMonth = new Date().getMonth() + 1;
+    const currYear = new Date().getFullYear();
+    const currMonthYear = currMonth + '-' + currYear;
+    const currDate = dateSelected.getDate();
+
+    if (docSnapProgress.exists() && currMonthYear in docSnapProgress.data()) {
+      let progressLog = docSnapProgress.data();
+
+      //Remove the current day from progress log it is in the log, since you can only modify
+      //the checklist of the current day, the current day is alsoways the  latest element.
+      if (progressLog[currMonthYear]['complete'].includes(currDate)) {
+        progressLog[currMonthYear]['complete'].pop();
+      }
+      if (progressLog[currMonthYear]['in_progress'].includes(currDate)) {
+        progressLog[currMonthYear]['in_progress'].pop();
+      }
+
+      //If the number  of complete items = number of items in the workout
+      //The day is complete add to complete.
+      if (numComplete === Object.keys(updatedWorkout).length) {
+        progressLog[currMonthYear]['complete'].push(currDate);
+      }
+      //Else if it is greater th an equal to 1 then add it to in_progress
+      else if (numComplete >= 1) {
+        progressLog[currMonthYear]['in_progress'].push(currDate);
+      }
+
+      //At this point we can now safely add the progressLog to the dtaabase.
+      await setDoc(docRefProgress, progressLog).then(
+        setProgressUpdate((e) => !e)
+      );
+    }
+    //Print  error m essage
+    else {
+      console.error(
+        'Error: No Progress Log found when updating progress/complete days'
+      );
+    }
   }
 
   return (

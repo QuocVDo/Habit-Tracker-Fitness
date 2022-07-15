@@ -24,6 +24,7 @@ export default function WeeklyCustomize({
   currUser,
   setShowCustomize,
   dateSelected,
+  setProgressUpdate,
 }) {
   const [activeTab, setActiveTab] = useState(0);
   const [list, setList] = useState([{}]);
@@ -224,6 +225,8 @@ export default function WeeklyCustomize({
     //Make the button load
     //setSaveLoad(true);
 
+    let restDays = [];
+
     //Check to see if Reps and Sets field are filled out properly
     for (const entry in list) {
       //Check to see if it is a rest day.
@@ -231,23 +234,7 @@ export default function WeeklyCustomize({
         Object.keys(list[entry]).length === 1 &&
         list[entry][0].exercise === ''
       ) {
-        /*
-         * update database with rest days
-         */
-        const docRef = doc(db, 'workout-progress', currUser.uid);
-        const docSnap = await getDoc(docRef);
-
-        const currMonth = new Date().getMonth() + 1;
-        const currYear = new Date().getFullYear();
-        const currMonthYear = currMonth + '-' + currYear;
-
-        if (docSnap.exists() && currMonthYear in docSnap.data()) {
-          let progressLog = docSnap.data();
-          progressLog[currMonthYear]['rest'].push(entry);
-          await setDoc(docRef, progressLog);
-        } else {
-          console.error('Error: No Progress Log found when updating rest days');
-        }
+        restDays.push(Number(entry));
       }
 
       for (const workout in list[entry]) {
@@ -266,6 +253,22 @@ export default function WeeklyCustomize({
           return;
         }
       }
+    }
+
+    //Update database with rest days
+    const docRef = doc(db, 'workout-progress', currUser.uid);
+    const docSnap = await getDoc(docRef);
+
+    const currMonth = new Date().getMonth() + 1;
+    const currYear = new Date().getFullYear();
+    const currMonthYear = currMonth + '-' + currYear;
+
+    if (docSnap.exists() && currMonthYear in docSnap.data()) {
+      let progressLog = docSnap.data();
+      progressLog[currMonthYear]['rest'] = restDays;
+      await setDoc(docRef, progressLog).then(setProgressUpdate((e) => !e));
+    } else {
+      console.error('Error: No Progress Log found when updating rest days');
     }
 
     //Create reference to the user's workout document in DB

@@ -35,11 +35,25 @@ export default function Fitness({ setContentState, currUser }) {
   const [completeDays, setCompleteDays] = useState([]);
   const [progressDays, setProgressDays] = useState([]);
 
+  //State for firing use effect whenever the thing gets updated
+  const [progressUpdate, setProgressUpdate] = useState(false);
+
   //On mount, retrieve  the data for progress
   useEffect(() => {
+    //Date selected month
+    const month = dateSelected.getMonth() + 1;
+    const year = dateSelected.getFullYear();
+    const monthYear = month + '-' + year;
+
+    //Current Month
     const currMonth = new Date().getMonth() + 1;
     const currYear = new Date().getFullYear();
     const currMonthYear = currMonth + '-' + currYear;
+
+    //Clear states on useEffect call
+    setRestDays([]);
+    setCompleteDays([]);
+    setProgressDays([]);
 
     //Async function to retrrieve data.
     async function fetchProgress() {
@@ -64,10 +78,12 @@ export default function Fitness({ setContentState, currUser }) {
           await setDoc(docRef, progressLog);
         }
 
-        //Update states
-        setCompleteDays(progressLog[currMonthYear]['complete']);
-        setRestDays(progressLog[currMonthYear]['rest']);
-        setProgressDays(progressLog[currMonthYear]['in_progress']);
+        //Update states if monthYear is in the selected Month
+        if (monthYear in progressLog) {
+          setCompleteDays(progressLog[monthYear]['complete']);
+          setRestDays(progressLog[monthYear]['rest']);
+          setProgressDays(progressLog[monthYear]['in_progress']);
+        }
       }
 
       //Else we  need to make a fresh docSnap and add the current month
@@ -83,9 +99,10 @@ export default function Fitness({ setContentState, currUser }) {
         await setDoc(docRef, progressLog);
 
         //Update states
-        setCompleteDays(progressLog[currMonthYear]['complete']);
-        setRestDays(progressLog[currMonthYear]['rest']);
-        setProgressDays(progressLog[currMonthYear]['in_progress']);
+        //Update states
+        setCompleteDays(progressLog[monthYear]['complete']);
+        setRestDays(progressLog[monthYear]['rest']);
+        setProgressDays(progressLog[monthYear]['in_progress']);
       }
     }
 
@@ -103,7 +120,7 @@ export default function Fitness({ setContentState, currUser }) {
      * In progress = Yellow, Completed = Green.
      *
      */
-  }, [currUser.uid]);
+  }, [currUser.uid, progressUpdate, dateSelected]);
 
   //Remove the workout for today.
   async function syncWorkout() {
@@ -144,23 +161,23 @@ export default function Fitness({ setContentState, currUser }) {
         borderRadius: '2px',
       };
     }
-  }
 
-  //DEBUG
-  function printDebug() {
-    //Months are 0 - 11 (january - december)
-    //console.log(dateSelected.getMonth());
-
-    console.log(restDays);
-    console.log(completeDays);
-    console.log(progressDays);
+    //If the day  of the week is a rest day.
+    else if (
+      restDays.includes(date.getDay()) &&
+      date.getDate() !== dateSelected.getDate() &&
+      date.getMonth() === dateSelected.getMonth()
+    ) {
+      return {
+        color: '#4dabf7',
+      };
+    }
   }
 
   return (
     <SimpleGrid cols={1}>
       <Paper shadow="sm" p="md">
         <Group>
-          <Button onClick={printDebug}>DEBUG</Button>
           <ActionIcon onClick={() => setContentState(0)}>
             <FaArrowLeft size={20} />
           </ActionIcon>
@@ -246,6 +263,7 @@ export default function Fitness({ setContentState, currUser }) {
 
         {showCustomize ? (
           <WeeklyCustomize
+            setProgressUpdate={setProgressUpdate}
             currUser={currUser}
             setShowCustomize={setShowCustomize}
             dateSelected={dateSelected}
@@ -257,6 +275,7 @@ export default function Fitness({ setContentState, currUser }) {
             updateWorkout={updateWorkout}
             todaysDoc={todaysDoc}
             setTodaysDoc={setTodaysDoc}
+            setProgressUpdate={setProgressUpdate}
           />
         )}
       </Paper>
