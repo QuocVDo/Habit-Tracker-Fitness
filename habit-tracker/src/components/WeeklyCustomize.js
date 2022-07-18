@@ -252,6 +252,14 @@ export default function WeeklyCustomize({
           setInvalid(true);
           return;
         }
+
+        //If we see an empty exercise set reps and sets to 0
+        else if (currWorkout.exercise === '') {
+          currWorkout.sets = null;
+          currWorkout.reps = null;
+          currWorkout.weight = '';
+          console.log(list);
+        }
       }
     }
 
@@ -266,7 +274,7 @@ export default function WeeklyCustomize({
     if (docSnap.exists() && currMonthYear in docSnap.data()) {
       let progressLog = docSnap.data();
       progressLog[currMonthYear]['rest'] = restDays;
-      await setDoc(docRef, progressLog).then(setProgressUpdate((e) => !e));
+      await setDoc(docRef, progressLog).then(setProgressUpdate((e) => e + 1));
     } else {
       console.error('Error: No Progress Log found when updating rest days');
     }
@@ -293,7 +301,6 @@ export default function WeeklyCustomize({
   return (
     <div style={{ position: 'relative' }}>
       <LoadingOverlay visible={showLoad} />
-
       <Modal
         size="md"
         centered

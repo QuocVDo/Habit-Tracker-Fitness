@@ -88,7 +88,7 @@ export default function WorkoutTodos({
             let workout = plan[entry];
 
             //DEBUG: Log exercise object {exercise, reps, set, weight}
-            //console.log(workout);
+            //console.log(workout);g
             //Only add exercises that  are not  empty/null
             if (workout.exercise !== '') {
               for (let i = 0; i < workout.sets; i++) {
@@ -244,7 +244,7 @@ export default function WorkoutTodos({
 
       //At this point we can now safely add the progressLog to the dtaabase.
       await setDoc(docRefProgress, progressLog).then(
-        setProgressUpdate((e) => !e)
+        setProgressUpdate((e) => e + 1)
       );
     }
     //Print  error m essage

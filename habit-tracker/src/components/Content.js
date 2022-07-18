@@ -24,7 +24,6 @@ export default function Content({
     if (!loggedIn) {
       setShowLoginModal(true);
     } else {
-      console.log(2);
     }
   };
 
@@ -33,7 +32,6 @@ export default function Content({
     if (!loggedIn) {
       setShowLoginModal(true);
     } else {
-      console.log(3);
     }
   };
 
@@ -49,14 +47,14 @@ export default function Content({
       <Grid.Col span={12}>
         <HabitCard
           image={UndrawDiet}
-          title={'Eating Habits'}
+          title={'Eating Habits (WIP)!'}
           func={dietHabitButton}
         />
       </Grid.Col>
       <Grid.Col span={12}>
         <HabitCard
           image={UndrawGeneric}
-          title={'Custom Habits'}
+          title={'Custom Habits (WIP)!'}
           func={customHabitButton}
         />
       </Grid.Col>

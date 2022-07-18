@@ -6,7 +6,8 @@ import Fitness from './Fitness';
 import ApplicationHeader from './ApplicationHeader';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
-import { AppShell, Navbar, Text, useMantineTheme, Modal } from '@mantine/core';
+import { AppShell, Navbar, useMantineTheme, Modal } from '@mantine/core';
+import ApplicationNavbar from './ApplicationNavbar';
 
 export default function ApplicationShell({ setColorScheme, colorScheme }) {
   const theme = useMantineTheme();
@@ -71,7 +72,7 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
           hidden={!opened}
           width={{ sm: 300, lg: 400 }}
         >
-          <Text>Application navbar</Text>
+          <ApplicationNavbar loggedIn={loggedIn} />
         </Navbar>
       }
       header={

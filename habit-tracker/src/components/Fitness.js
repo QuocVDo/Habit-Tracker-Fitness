@@ -26,9 +26,10 @@ import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 export default function Fitness({ setContentState, currUser }) {
   const [dateSelected, setDateSelected] = useState(new Date());
   const [showCustomize, setShowCustomize] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(true);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [updateWorkout, setUpdateWorkout] = useState(false);
   const [todaysDoc, setTodaysDoc] = useState();
+  const [month, onMonthChange] = useState(new Date());
 
   //States for holding which days are rest days, which are complete, etc.
   const [restDays, setRestDays] = useState([]);
@@ -36,14 +37,14 @@ export default function Fitness({ setContentState, currUser }) {
   const [progressDays, setProgressDays] = useState([]);
 
   //State for firing use effect whenever the thing gets updated
-  const [progressUpdate, setProgressUpdate] = useState(false);
+  const [progressUpdate, setProgressUpdate] = useState(0);
 
   //On mount, retrieve  the data for progress
   useEffect(() => {
     //Date selected month
-    const month = dateSelected.getMonth() + 1;
-    const year = dateSelected.getFullYear();
-    const monthYear = month + '-' + year;
+    const realMonth = month.getMonth() + 1;
+    const year = month.getFullYear();
+    const monthYear = realMonth + '-' + year;
 
     //Current Month
     const currMonth = new Date().getMonth() + 1;
@@ -51,9 +52,9 @@ export default function Fitness({ setContentState, currUser }) {
     const currMonthYear = currMonth + '-' + currYear;
 
     //Clear states on useEffect call
-    setRestDays([]);
-    setCompleteDays([]);
-    setProgressDays([]);
+    //setRestDays([]);
+    //setCompleteDays([]);
+    //setProgressDays([]);
 
     //Async function to retrrieve data.
     async function fetchProgress() {
@@ -120,7 +121,7 @@ export default function Fitness({ setContentState, currUser }) {
      * In progress = Yellow, Completed = Green.
      *
      */
-  }, [currUser.uid, progressUpdate, dateSelected]);
+  }, [currUser.uid, progressUpdate, month]);
 
   //Remove the workout for today.
   async function syncWorkout() {
@@ -174,6 +175,21 @@ export default function Fitness({ setContentState, currUser }) {
     }
   }
 
+  //Use Effect Array
+  //When the user navigates to a different month
+  //Force the calendar to rerender and recolor the days
+  //Also clear the arrays
+  useEffect(() => {
+    let newDate = month;
+    newDate.setDate(1);
+    setDateSelected(newDate);
+
+    //Reset arrays
+    setCompleteDays([]);
+    setRestDays([]);
+    setProgressDays([]);
+  }, [month]);
+
   return (
     <SimpleGrid cols={1}>
       <Paper shadow="sm" p="md">
@@ -185,7 +201,7 @@ export default function Fitness({ setContentState, currUser }) {
             style={{ marginLeft: 'auto' }}
             onClick={() => setShowCalendar((e) => !e)}
           >
-            {showCalendar ? (
+            {showCalendar % 2 === 0 ? (
               <FaChevronUp title="Hide Calendar" />
             ) : (
               <FaChevronDown title="Show Calendar" />
@@ -197,14 +213,18 @@ export default function Fitness({ setContentState, currUser }) {
           <Title order={3}> Fitness Tracker</Title>
         </Center>
         <Center>
-          {showCalendar && (
+          {showCalendar % 2 === 0 && (
             <Calendar
               size="sm"
+              disableOutsideEvents
               firstDayOfWeek="sunday"
               value={dateSelected}
+              onMonthChange={onMonthChange}
+              month={month}
               weekendDays={[]}
               onChange={setDateSelected}
               dayStyle={(date) => colorDays(date)}
+              styles={{ outside: { opacity: '0' } }}
             />
           )}
         </Center>

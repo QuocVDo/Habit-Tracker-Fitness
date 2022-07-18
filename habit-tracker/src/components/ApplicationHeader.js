@@ -29,7 +29,7 @@ export default function ApplicationHeader({
 
         <Group noWrap>
           <FaDumbbell size={30} color="#137aaf" />
-          {loggedIn && <Title order={6}>Fitness Habits</Title>}
+          {loggedIn && <Title order={6}>Habit Tracker</Title>}
         </Group>
 
         <Group noWrap style={{ marginLeft: 'auto' }}>
