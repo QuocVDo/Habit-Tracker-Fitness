@@ -190,8 +190,12 @@ export default function Fitness({ setContentState, currUser }) {
     setProgressDays([]);
   }, [month]);
 
+  function printDebug() {
+    console.log(restDays);
+  }
   return (
     <SimpleGrid cols={1}>
+      <button onClick={printDebug}>DEBUG</button>
       <Paper shadow="sm" p="md">
         <Group>
           <ActionIcon onClick={() => setContentState(0)}>
