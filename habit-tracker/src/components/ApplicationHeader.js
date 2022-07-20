@@ -1,7 +1,8 @@
 import React from 'react';
 import MenuIcons from './MenuIcons';
-import { Header, MediaQuery, Burger, Group, Title } from '@mantine/core';
+import { Header, MediaQuery, Burger, Group, Anchor } from '@mantine/core';
 import { FaDumbbell } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function ApplicationHeader({
   opened,
@@ -27,9 +28,19 @@ export default function ApplicationHeader({
           />
         </MediaQuery>
 
-        <Group noWrap>
+        <Group noWrap position="left">
           <FaDumbbell size={30} color="#137aaf" />
-          {loggedIn && <Title order={6}>Habit Tracker</Title>}
+          {loggedIn && (
+            <Anchor
+              variant="text"
+              size="lg"
+              weight={700}
+              component={Link}
+              to="/"
+            >
+              Habit Tracker
+            </Anchor>
+          )}
         </Group>
 
         <Group noWrap style={{ marginLeft: 'auto' }}>

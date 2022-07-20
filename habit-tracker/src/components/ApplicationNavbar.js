@@ -31,7 +31,15 @@ export default function ApplicationNavbar({ loggedIn }) {
           </Anchor>
         </Group>
         <Divider style={{ marginBottom: '1rem' }} />
-        {!loggedIn ? <Text>Not logged in</Text> : <Text>Logged in</Text>}
+        {!loggedIn ? (
+          <Text>Please Log In to Proceed</Text>
+        ) : (
+          <div>
+            <Anchor component={Link} to="/">
+              Home
+            </Anchor>
+          </div>
+        )}
       </Container>
     </div>
   );

@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  Paper,
-  Title,
-  Divider,
-  Accordion,
-  ThemeIcon,
-  Text,
-  Space,
-  List,
-} from '@mantine/core';
+import { Paper, Title, Divider, Text, Space } from '@mantine/core';
 
 export default function AboutMeContent() {
   return (

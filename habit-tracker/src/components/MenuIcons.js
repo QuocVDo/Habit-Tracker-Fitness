@@ -123,7 +123,7 @@ export default function MenuIcons({
           <UserAvatarAndEmail />
 
           <Divider />
-          <Menu.Item icon={<FaCog />}>Settings</Menu.Item>
+          <Menu.Item icon={<FaCog />}>Settings (PlaceHolder)</Menu.Item>
           <Menu.Item icon={<FaCircle />}>Placeholder</Menu.Item>
           <Menu.Item icon={<FaCircle />}>Placeholder</Menu.Item>
           <Menu.Item icon={<FaCircle />}>Placeholder</Menu.Item>
