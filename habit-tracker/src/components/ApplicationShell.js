@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login';
-import Content from './Content';
+import Content from './content/Content';
 import Register from './Register';
 import Fitness from './Fitness';
 import ApplicationHeader from './ApplicationHeader';
@@ -8,7 +8,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { AppShell, Navbar, useMantineTheme, Modal } from '@mantine/core';
 import ApplicationNavbar from './ApplicationNavbar';
-import GettingStartedContent from './GettingStartedContent';
+import GettingStartedContent from './content/GettingStartedContent';
+import AboutMeContent from './content/AboutMeContent';
 
 export default function ApplicationShell({
   setColorScheme,
@@ -125,6 +126,7 @@ export default function ApplicationShell({
         />
         <Fitness setContentState={setContentState} currUser={currUser} />
         <GettingStartedContent />
+        <AboutMeContent />
       </IfContent>
     </AppShell>
   );

@@ -26,8 +26,8 @@ export default function ApplicationNavbar({ loggedIn }) {
           <ThemeIcon radius="xl" size="lg">
             <FaInfo />
           </ThemeIcon>
-          <Anchor component={Link} to="/about-me">
-            About Me
+          <Anchor component={Link} to="/contact-me">
+            Contact Me
           </Anchor>
         </Group>
         <Divider style={{ marginBottom: '1rem' }} />

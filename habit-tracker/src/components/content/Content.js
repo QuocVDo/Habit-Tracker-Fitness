@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid } from '@mantine/core';
-import HabitCard from './HabitCard';
-import UndrawWeights from '../assets/undraw_weights.svg';
-import UndrawDiet from '../assets/undraw_diet.svg';
-import UndrawGeneric from '../assets/undraw_generic_habit.svg';
+import HabitCard from '../HabitCard';
+import UndrawWeights from '../../assets/undraw_weights.svg';
+import UndrawDiet from '../../assets/undraw_diet.svg';
+import UndrawGeneric from '../../assets/undraw_generic_habit.svg';
 
 export default function Content({
   loggedIn,
