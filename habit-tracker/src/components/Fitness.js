@@ -181,7 +181,16 @@ export default function Fitness({ setContentState, currUser }) {
   //Also clear the arrays
   useEffect(() => {
     let newDate = month;
-    newDate.setDate(1);
+
+    //If month is current, then setDate = currentDate
+    //Else setDate = 1.
+    if (month.getMonth() === new Date().getMonth()) {
+      newDate.setDate(new Date().getDate());
+    } else {
+      newDate.setDate(1);
+    }
+
+    //update the calendar state
     setDateSelected(newDate);
 
     //Reset arrays
