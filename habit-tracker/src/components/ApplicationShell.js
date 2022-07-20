@@ -8,8 +8,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { AppShell, Navbar, useMantineTheme, Modal } from '@mantine/core';
 import ApplicationNavbar from './ApplicationNavbar';
+import GettingStartedContent from './GettingStartedContent';
 
-export default function ApplicationShell({ setColorScheme, colorScheme }) {
+export default function ApplicationShell({
+  setColorScheme,
+  colorScheme,
+  contentState,
+  setContentState,
+}) {
   const theme = useMantineTheme();
 
   //For Burger Icon and Navbar
@@ -26,9 +32,6 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
 
   //State for opening and closing the Reg Modal
   const [showRegModal, setShowRegModal] = useState(false);
-
-  //State for knowing what main content to render
-  const [contentState, setContentState] = useState(0);
 
   //UseEffect hook + onAuthStateChanged in order to
   //Respond to changes in Authentication state.
@@ -121,6 +124,7 @@ export default function ApplicationShell({ setColorScheme, colorScheme }) {
           setContentState={setContentState}
         />
         <Fitness setContentState={setContentState} currUser={currUser} />
+        <GettingStartedContent />
       </IfContent>
     </AppShell>
   );

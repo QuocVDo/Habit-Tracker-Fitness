@@ -5,6 +5,8 @@ import ApplicationShell from './components/ApplicationShell';
 
 function App() {
   const [colorScheme, setColorScheme] = useState('dark');
+  //State for knowing what main content to render
+  const [contentState, setContentState] = useState(0);
   return (
     <MantineProvider
       withGlobalStyles
@@ -21,6 +23,8 @@ function App() {
         <ApplicationShell
           setColorScheme={setColorScheme}
           colorScheme={colorScheme}
+          contentState={contentState}
+          setContentState={setContentState}
         />
       </NotificationsProvider>
     </MantineProvider>

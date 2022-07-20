@@ -1,8 +1,14 @@
 import React from 'react';
-import { Container, ThemeIcon, Group, Divider, Text } from '@mantine/core';
+import {
+  Container,
+  ThemeIcon,
+  Group,
+  Divider,
+  Text,
+  Anchor,
+} from '@mantine/core';
 import { FaRocket, FaInfo } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import '../styles/ApplicationNavbar.css';
 
 export default function ApplicationNavbar({ loggedIn }) {
   return (
@@ -12,17 +18,17 @@ export default function ApplicationNavbar({ loggedIn }) {
           <ThemeIcon radius="xl" size="lg">
             <FaRocket />
           </ThemeIcon>
-          <Link className="link" to="/getting-started">
+          <Anchor component={Link} to="/getting-started">
             Getting Started
-          </Link>
+          </Anchor>
         </Group>
         <Group style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <ThemeIcon radius="xl" size="lg">
             <FaInfo />
           </ThemeIcon>
-          <Link className="link" to="/about-me">
+          <Anchor component={Link} to="/about-me">
             About Me
-          </Link>
+          </Anchor>
         </Group>
         <Divider style={{ marginBottom: '1rem' }} />
         {!loggedIn ? <Text>Not logged in</Text> : <Text>Logged in</Text>}
