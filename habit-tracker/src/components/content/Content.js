@@ -47,14 +47,14 @@ export default function Content({
       <Grid.Col span={12}>
         <HabitCard
           image={UndrawDiet}
-          title={'Eating Habits (WIP)!'}
+          title={'Eating Habits (WIP)'}
           func={dietHabitButton}
         />
       </Grid.Col>
       <Grid.Col span={12}>
         <HabitCard
           image={UndrawGeneric}
-          title={'Custom Habits (WIP)!'}
+          title={'Custom Habits (WIP)'}
           func={customHabitButton}
         />
       </Grid.Col>
