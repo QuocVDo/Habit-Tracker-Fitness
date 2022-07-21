@@ -3,8 +3,7 @@ import { MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
 import ApplicationShell from './components/ApplicationShell';
 
-function App() {
-  const [colorScheme, setColorScheme] = useState('dark');
+function App({ colorScheme, setColorScheme }) {
   //State for knowing what main content to render
   const [contentState, setContentState] = useState(0);
   return (

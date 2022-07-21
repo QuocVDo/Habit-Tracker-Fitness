@@ -3,8 +3,7 @@ import { MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
 import ApplicationShell from '../components/ApplicationShell';
 
-export default function ContactMe() {
-  const [colorScheme, setColorScheme] = useState('dark');
+export default function ContactMe({ colorScheme, setColorScheme }) {
   //State for knowing what main content to render
   const [contentState, setContentState] = useState(3);
   return (
