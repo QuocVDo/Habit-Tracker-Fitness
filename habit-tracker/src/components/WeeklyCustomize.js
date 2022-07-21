@@ -151,7 +151,7 @@ export default function WeeklyCustomize({
               <NumberInput
                 min={1}
                 required
-                description="Min is 1"
+                description="Min: 1"
                 defaultValue={element.reps}
                 onChange={(val) => updateReps(val, index)}
                 label="Reps"
@@ -159,7 +159,8 @@ export default function WeeklyCustomize({
               <NumberInput
                 min={1}
                 required
-                description="Min is 1"
+                description="Range:  1-30"
+                max={30}
                 defaultValue={element.sets}
                 onChange={(val) => updateSets(val, index)}
                 label="Sets"
