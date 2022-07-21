@@ -3,7 +3,11 @@ import { Container, ThemeIcon, Group, Divider, Anchor } from '@mantine/core';
 import { FaRocket, FaInfo } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-export default function ApplicationNavbar({ loggedIn, setOpened }) {
+export default function ApplicationNavbar({
+  loggedIn,
+  setOpened,
+  setContentState,
+}) {
   return (
     <div>
       <Container>
@@ -40,6 +44,7 @@ export default function ApplicationNavbar({ loggedIn, setOpened }) {
         <Anchor
           onClick={() => {
             setOpened(false);
+            setContentState(0);
           }}
           component={Link}
           to="/"

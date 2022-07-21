@@ -18,9 +18,9 @@ import {
   FaInfoCircle,
   FaCloudDownloadAlt,
 } from 'react-icons/fa';
-import WeeklyCustomize from './WeeklyCustomize';
-import WorkoutTodos from './WorkoutTodos';
-import { db } from '../firebase';
+import WeeklyCustomize from '../WeeklyCustomize';
+import WorkoutTodos from '../WorkoutTodos';
+import { db } from '../../firebase';
 import { doc, deleteDoc, getDoc, setDoc } from 'firebase/firestore';
 
 export default function Fitness({ setContentState, currUser }) {
@@ -202,10 +202,11 @@ export default function Fitness({ setContentState, currUser }) {
   return (
     <SimpleGrid cols={1}>
       <Paper shadow="sm" p="md">
-        <Group>
+        <Group position="apart">
           <ActionIcon onClick={() => setContentState(0)}>
             <FaArrowLeft size={20} />
           </ActionIcon>
+
           <ActionIcon
             style={{ marginLeft: 'auto' }}
             onClick={() => setShowCalendar((e) => !e)}
@@ -267,7 +268,7 @@ export default function Fitness({ setContentState, currUser }) {
                     size="xs"
                     onClick={() => setShowCustomize((e) => !e)}
                   >
-                    Customize
+                    Customize Weekly Plan
                   </Button>
                 </Group>
               </Group>

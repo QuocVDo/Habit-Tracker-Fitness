@@ -14,6 +14,7 @@ export default function ApplicationHeader({
   loggedIn,
   setShowLoginModal,
   setShowRegModal,
+  setContentState,
 }) {
   return (
     <Header height={60} p="md">
@@ -37,6 +38,9 @@ export default function ApplicationHeader({
               weight={700}
               component={Link}
               to="/"
+              onClick={() => {
+                setContentState(0);
+              }}
             >
               Habit Tracker
             </Anchor>

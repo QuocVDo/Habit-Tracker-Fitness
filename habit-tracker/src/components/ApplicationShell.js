@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Login from './Login';
 import Content from './content/Content';
 import Register from './Register';
-import Fitness from './Fitness';
+import Fitness from './content/Fitness';
 import ApplicationHeader from './ApplicationHeader';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -76,12 +76,17 @@ export default function ApplicationShell({
           hidden={!opened}
           width={{ sm: 300, lg: 400 }}
         >
-          <ApplicationNavbar loggedIn={loggedIn} setOpened={setOpened} />
+          <ApplicationNavbar
+            loggedIn={loggedIn}
+            setOpened={setOpened}
+            setContentState={setContentState}
+          />
         </Navbar>
       }
       header={
         <ApplicationHeader
           opened={opened}
+          setContentState={setContentState}
           setOpened={setOpened}
           theme={theme}
           setColorScheme={setColorScheme}

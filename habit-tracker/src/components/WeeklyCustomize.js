@@ -258,7 +258,12 @@ export default function WeeklyCustomize({
           currWorkout.sets = null;
           currWorkout.reps = null;
           currWorkout.weight = '';
-          console.log(list);
+          //console.log(list);
+        }
+
+        //If weight is undefined then make it  empty
+        if (currWorkout.weight === undefined) {
+          currWorkout.weight = '';
         }
       }
     }
