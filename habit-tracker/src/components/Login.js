@@ -63,9 +63,9 @@ export default function Login({ setShowRegModal, setShowLoginModal }) {
   //Sign in with Google
   const signInWithGoogleButton = async () => {
     const provider = new GoogleAuthProvider();
-    console.log('signing in with google');
+
     try {
-      await signInWithPopup(auth, provider).then(console.log('signed in'));
+      await signInWithPopup(auth, provider);
     } catch (error) {
       setAuthFailed(true);
     }

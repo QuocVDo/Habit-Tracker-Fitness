@@ -76,7 +76,7 @@ export default function ApplicationShell({
           hidden={!opened}
           width={{ sm: 300, lg: 400 }}
         >
-          <ApplicationNavbar loggedIn={loggedIn} />
+          <ApplicationNavbar loggedIn={loggedIn} setOpened={setOpened} />
         </Navbar>
       }
       header={

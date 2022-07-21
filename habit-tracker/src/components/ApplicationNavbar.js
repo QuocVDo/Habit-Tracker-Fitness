@@ -1,16 +1,9 @@
 import React from 'react';
-import {
-  Container,
-  ThemeIcon,
-  Group,
-  Divider,
-  Text,
-  Anchor,
-} from '@mantine/core';
+import { Container, ThemeIcon, Group, Divider, Anchor } from '@mantine/core';
 import { FaRocket, FaInfo } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-export default function ApplicationNavbar({ loggedIn }) {
+export default function ApplicationNavbar({ loggedIn, setOpened }) {
   return (
     <div>
       <Container>
@@ -18,7 +11,13 @@ export default function ApplicationNavbar({ loggedIn }) {
           <ThemeIcon radius="xl" size="lg">
             <FaRocket />
           </ThemeIcon>
-          <Anchor component={Link} to="/getting-started">
+          <Anchor
+            component={Link}
+            onClick={() => {
+              setOpened(false);
+            }}
+            to="/getting-started"
+          >
             Getting Started
           </Anchor>
         </Group>
@@ -26,20 +25,27 @@ export default function ApplicationNavbar({ loggedIn }) {
           <ThemeIcon radius="xl" size="lg">
             <FaInfo />
           </ThemeIcon>
-          <Anchor component={Link} to="/contact-me">
+          <Anchor
+            component={Link}
+            onClick={() => {
+              setOpened(false);
+            }}
+            to="/contact-me"
+          >
             Contact Me
           </Anchor>
         </Group>
         <Divider style={{ marginBottom: '1rem' }} />
-        {!loggedIn ? (
-          <Text>Please Log In to Proceed</Text>
-        ) : (
-          <div>
-            <Anchor component={Link} to="/">
-              Home
-            </Anchor>
-          </div>
-        )}
+
+        <Anchor
+          onClick={() => {
+            setOpened(false);
+          }}
+          component={Link}
+          to="/"
+        >
+          Home
+        </Anchor>
       </Container>
     </div>
   );

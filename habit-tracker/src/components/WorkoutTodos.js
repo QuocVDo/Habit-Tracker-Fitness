@@ -20,6 +20,8 @@ import {
 } from 'firebase/firestore';
 import '../styles/WorkoutTodos.css';
 import { db } from '../firebase';
+import { showNotification } from '@mantine/notifications';
+import { FaRegStar } from 'react-icons/fa';
 
 export default function WorkoutTodos({
   dateSelected,
@@ -236,6 +238,13 @@ export default function WorkoutTodos({
       //The day is complete add to complete.
       if (numComplete === Object.keys(updatedWorkout).length) {
         progressLog[currMonthYear]['complete'].push(currDate);
+        showNotification({
+          title: `Congrats!`,
+          color: 'cyan',
+          icon: <FaRegStar />,
+          message: "You've completed your workout for today.",
+          autoClose: false,
+        });
       }
       //Else if it is greater th an equal to 1 then add it to in_progress
       else if (numComplete >= 1) {
