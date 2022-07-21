@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^3.6.0",
+    "@capacitor/cli": "^3.6.0",
+    "@capacitor/core": "^3.6.0",
     "@mantine/core": "^4.2.11",
     "@mantine/dates": "^4.2.11",
     "@mantine/form": "^4.2.11",

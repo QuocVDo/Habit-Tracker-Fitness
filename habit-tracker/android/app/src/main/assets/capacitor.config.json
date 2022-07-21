@@ -1,0 +1,6 @@
+{
+	"appId": "com.qdo.habit.tracker.app",
+	"appName": "habit-tracker",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}
