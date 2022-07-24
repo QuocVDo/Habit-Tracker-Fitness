@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "100720528960",
+    "project_id": "habit-tracker-5498a",
+    "storage_bucket": "habit-tracker-5498a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100720528960:android:ea985ee082da6f40ca59a5",
+        "android_client_info": {
+          "package_name": "com.habit.tracker.qdo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "100720528960-gduth8qem6hiuioiv29t76563j0ijvbi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoLtGPWa7dHSUKEpX4ZtvA1kb2bP4XLK8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "100720528960-gduth8qem6hiuioiv29t76563j0ijvbi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

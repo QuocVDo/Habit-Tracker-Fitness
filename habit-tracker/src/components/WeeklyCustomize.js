@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { getDoc, doc, setDoc } from 'firebase/firestore';
+import { getDoc, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import '../styles/WeeklyCustomize.css';
 import {
   Tabs,
@@ -12,6 +12,7 @@ import {
   Modal,
   Alert,
   LoadingOverlay,
+  Tooltip,
 } from '@mantine/core';
 import {
   FaExclamationTriangle,
@@ -23,8 +24,8 @@ import { showNotification } from '@mantine/notifications';
 export default function WeeklyCustomize({
   currUser,
   setShowCustomize,
-  dateSelected,
   setProgressUpdate,
+  todaysDoc,
 }) {
   const [activeTab, setActiveTab] = useState(0);
   const [list, setList] = useState([{}]);
@@ -32,6 +33,7 @@ export default function WeeklyCustomize({
   const [cancelModal, setCancelModal] = useState(false);
   const [showLoad, setShowLoad] = useState(false);
   const [saveLoad, setSaveLoad] = useState(false);
+  const [saveSyncLoad, setSaveSyncLoad] = useState(false);
   const [invalid, setInvalid] = useState(false);
 
   //Use Effect, When component mounts we  will fetch the
@@ -187,19 +189,22 @@ export default function WeeklyCustomize({
           </Container>
         ))}
 
-        <Group position="center">
-          <Button
-            className="save-button"
-            onClick={updateDatabase}
-            loading={saveLoad}
-          >
+        <Group position="center" className="save-button">
+          <Button onClick={() => updateDatabase(false)} loading={saveLoad}>
             Save Changes
           </Button>
-          <Button
-            className="save-button"
-            color="red"
-            onClick={() => setCancelModal(true)}
-          >
+          {activeTab === new Date().getDay() && (
+            <Tooltip label="Save changes then sync with today's workout">
+              <Button
+                loading={saveSyncLoad}
+                onClick={() => updateDatabase(true)}
+              >
+                Save and Sync
+              </Button>
+            </Tooltip>
+          )}
+
+          <Button color="red" onClick={() => setCancelModal(true)}>
             Cancel
           </Button>
         </Group>
@@ -222,9 +227,19 @@ export default function WeeklyCustomize({
   }
 
   //PUSH CHANGES TO DATABASE
-  async function updateDatabase() {
-    //Make the button load
-    //setSaveLoad(true);
+  async function updateDatabase(syncBool) {
+    //Make the corresponding button load button load
+    if (syncBool) {
+      setSaveSyncLoad(true);
+    } else {
+      setSaveLoad(true);
+    }
+
+    //If syncBool is true we want to save and sync.
+    //Not only do we save the changes, but we delete the old document.
+    if (syncBool) {
+      await deleteDoc(doc(db, 'workout-logs', todaysDoc));
+    }
 
     let restDays = [];
 
@@ -290,7 +305,6 @@ export default function WeeklyCustomize({
 
     //Replace old document with new one.  The changes we push are the
     //updated list object which contains all the new state information.
-
     await setDoc(workoutRef, list).then(() => {
       setSaveLoad(false);
       setShowCustomize(false);

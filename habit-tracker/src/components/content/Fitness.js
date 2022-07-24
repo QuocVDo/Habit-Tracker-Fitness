@@ -220,10 +220,10 @@ export default function Fitness({ setContentState, currUser }) {
         </Group>
 
         <Center>
-          <Title order={3}> Fitness Tracker</Title>
+          {!showCalendar && <Title order={3}> Fitness Tracker</Title>}
         </Center>
         <Center>
-          {showCalendar % 2 === 0 && (
+          {!showCalendar && (
             <Calendar
               size="sm"
               disableOutsideEvents
@@ -295,8 +295,8 @@ export default function Fitness({ setContentState, currUser }) {
           <WeeklyCustomize
             setProgressUpdate={setProgressUpdate}
             currUser={currUser}
+            todaysDoc={todaysDoc}
             setShowCustomize={setShowCustomize}
-            dateSelected={dateSelected}
           />
         ) : (
           <WorkoutTodos
