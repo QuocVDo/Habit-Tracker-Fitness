@@ -2,9 +2,9 @@
 This is a presonal project developed solely by me. It is a simple and intuitive habit tracking web app that also supports a native android deployment. It uses Firebase for the backend user authentication as well as Firestore for storage of user-created workout plans as well as real-time logging of progress data. 
 
 <div align="center">
-<h2>
+<h1>
 https://habit-tracker-5498a.web.app/
-</h2>
+</h1>
 </div>
 
 
