@@ -3,6 +3,7 @@ This is a presonal project developed solely by me. It is a simple and intuitive 
 
 # Features!
  - Desktop and Mobile browser support
+ - Responsive web layout
  - Native Android Support
  - Customizable Weekly Workout plans
  - Intuitive TODO list generated for each daily workout so you check off sets as you complete them.
