@@ -3,7 +3,7 @@ This is a presonal project developed solely by me. It is a simple and intuitive 
 
 <div align="center">
 <h2>
-https://habit-tracker-5498a.web.app/getting-started
+https://habit-tracker-5498a.web.app/
 </h2>
 </div>
 
